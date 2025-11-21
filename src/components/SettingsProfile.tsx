@@ -6,6 +6,21 @@ import { supabase } from '@/lib/supabase'
 import { Camera, X, Upload, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
+interface Photo {
+    url: string
+    sort_order: number
+}
+
+interface Profile {
+    display_name: string | null
+    bio: string | null
+    age: number | null
+    location: string | null
+    gender: string | null
+    interests: string[] | null
+    photos: Photo[]
+}
+
 export default function SettingsProfile() {
     const { address } = useAccount()
     const router = useRouter()
@@ -29,7 +44,7 @@ export default function SettingsProfile() {
         if (!address) return
 
         try {
-            const { data: profile } = await supabase
+            const { data } = await supabase
                 .from('profiles')
                 .select(`
           *,
@@ -37,6 +52,8 @@ export default function SettingsProfile() {
         `)
                 .eq('wallet_address', address)
                 .single()
+
+            const profile = data as unknown as Profile
 
             if (profile) {
                 setFormData({

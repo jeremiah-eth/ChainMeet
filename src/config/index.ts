@@ -1,4 +1,4 @@
-import { cookieStorage, createStorage, http } from '@wagmi/core'
+import { cookieStorage, createStorage } from '@wagmi/core'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mainnet, arbitrum } from '@reown/appkit/networks'
 
@@ -11,14 +11,16 @@ if (!projectId) {
 
 export const networks = [mainnet, arbitrum]
 
-// Set up Wagmi Adapter
+// Set up Wagmi Adapter with minimal connectors
 export const wagmiAdapter = new WagmiAdapter({
     storage: createStorage({
         storage: cookieStorage
     }),
     ssr: true,
     projectId,
-    networks
+    networks,
+    connectors: [] // Use only Reown's built-in connectors, not Wagmi's default ones
 })
 
 export const config = wagmiAdapter.wagmiConfig
+
