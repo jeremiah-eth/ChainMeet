@@ -3,6 +3,7 @@
 import { useAccount, useBalance, useDisconnect } from 'wagmi'
 import { Check, Copy, Send, Download } from 'lucide-react'
 import { useState } from 'react'
+import { formatUnits } from 'viem'
 
 export default function WalletCard() {
     const { address, isConnected } = useAccount()
@@ -54,7 +55,7 @@ export default function WalletCard() {
                 <label className="text-xs text-gray-400">Balance</label>
                 <div className="glass-panel px-4 py-3">
                     <div className="text-2xl font-bold">
-                        {balance ? `${parseFloat(balance.formatted).toFixed(4)} ${balance.symbol}` : '0.0000 ETH'}
+                        {balance ? `${parseFloat(formatUnits(balance.value, balance.decimals)).toFixed(4)} ${balance.symbol}` : '0.0000 ETH'}
                     </div>
                 </div>
             </div>
