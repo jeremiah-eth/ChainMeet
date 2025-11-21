@@ -14,7 +14,7 @@ interface Profile {
     latitude: number | null
     longitude: number | null
     interests: string[]
-    photos: { url: string }[]
+    photos: { url: string; sort_order: number }[]
     distance?: number
     matchScore?: number
 }
@@ -56,7 +56,7 @@ export default function SocialFeed() {
                 .select('blocked_id')
                 .eq('blocker_id', address)
 
-            const blockedIds = blockedData?.map(b => b.blocked_id) || []
+            const blockedIds = blockedData?.map((b: { blocked_id: string }) => b.blocked_id) || []
 
             // Fetch profiles with photos
             const { data: profilesData, error } = await supabase
@@ -72,7 +72,7 @@ export default function SocialFeed() {
             if (error) throw error
 
             // Calculate distances and match scores
-            const enrichedProfiles = profilesData?.map(profile => {
+            const enrichedProfiles = profilesData?.map((profile: any) => {
                 let distance = null
                 let matchScore = Math.floor(Math.random() * 30) + 70 // Mock: 70-100%
 
@@ -87,7 +87,7 @@ export default function SocialFeed() {
 
                 // Boost match score based on shared interests
                 if (currentUser?.interests && profile.interests) {
-                    const sharedInterests = profile.interests.filter(i =>
+                    const sharedInterests = profile.interests.filter((i: string) =>
                         currentUser.interests.includes(i)
                     ).length
                     matchScore = Math.min(100, matchScore + (sharedInterests * 5))
@@ -95,7 +95,7 @@ export default function SocialFeed() {
 
                 return {
                     ...profile,
-                    photos: profile.photos?.sort((a, b) => a.sort_order - b.sort_order) || [],
+                    photos: profile.photos?.sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order) || [],
                     distance,
                     matchScore
                 }
