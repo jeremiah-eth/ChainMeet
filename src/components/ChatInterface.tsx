@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 import { supabase } from '@/lib/supabase'
 import { Send, Circle, Check, CheckCheck } from 'lucide-react'
 import { useChat } from '@/hooks/useChat'
+import { MessageBubble } from './chat/MessageBubble'
 
 interface Match {
     wallet_address: string
@@ -132,10 +133,6 @@ export default function ChatInterface() {
                             />
                             <h3 className="font-semibold">{selectedMatch.display_name}</h3>
                         </div>
-
-                        import {MessageBubble} from './chat/MessageBubble'
-
-                        // ...
 
                         {/* Messages */}
                         <div className="flex-1 p-4 overflow-y-auto space-y-4">
