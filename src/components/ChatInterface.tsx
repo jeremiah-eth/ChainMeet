@@ -1,9 +1,8 @@
-'use client'
-
 import { useState, useEffect, useRef } from 'react'
 import { useAccount } from 'wagmi'
 import { supabase } from '@/lib/supabase'
 import { Send, Circle } from 'lucide-react'
+import { useChat } from '@/hooks/useChat'
 
 interface Match {
     wallet_address: string
@@ -12,36 +11,22 @@ interface Match {
     unreadCount?: number
 }
 
-interface Message {
-    id: string
-    sender_id: string
-    receiver_id: string
-    content: string
-    created_at: string
-    read: boolean
-}
-
 export default function ChatInterface() {
     const { address } = useAccount()
     const [matches, setMatches] = useState<Match[]>([])
     const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
-    const [messages, setMessages] = useState<Message[]>([])
     const [newMessage, setNewMessage] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
+
+    const { messages, sendMessage, isTyping, broadcastTyping } = useChat(selectedMatch?.wallet_address || null)
 
     useEffect(() => {
         fetchMatches()
     }, [address])
 
     useEffect(() => {
-        if (selectedMatch) {
-            fetchMessages(selectedMatch.wallet_address)
-        }
-    }, [selectedMatch])
-
-    useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+    }, [messages, isTyping])
 
     const fetchMatches = async () => {
         if (!address) return
@@ -74,49 +59,16 @@ export default function ChatInterface() {
         }
     }
 
-    const fetchMessages = async (matchId: string) => {
-        if (!address) return
-
-        try {
-            const { data } = await supabase
-                .from('messages')
-                .select('*')
-                .or(`and(sender_id.eq.${address},receiver_id.eq.${matchId}),and(sender_id.eq.${matchId},receiver_id.eq.${address})`)
-                .order('created_at', { ascending: true })
-
-            setMessages(data || [])
-
-            // Mark messages as read
-            await supabase
-                .from('messages')
-                .update({ read: true })
-                .eq('receiver_id', address)
-                .eq('sender_id', matchId)
-        } catch (error) {
-            console.error('Error fetching messages:', error)
-        }
-    }
-
-    const sendMessage = async () => {
+    const handleSendMessage = async () => {
         if (!address || !selectedMatch || !newMessage.trim()) return
 
-        try {
-            const { data, error } = await supabase
-                .from('messages')
-                .insert({
-                    sender_id: address,
-                    receiver_id: selectedMatch.wallet_address,
-                    content: newMessage.trim()
-                })
-                .select()
-                .single()
+        await sendMessage(newMessage, address)
+        setNewMessage('')
+    }
 
-            if (error) throw error
-
-            setMessages(prev => [...prev, data])
-            setNewMessage('')
-        } catch (error) {
-            console.error('Error sending message:', error)
+    const handleTyping = () => {
+        if (address) {
+            broadcastTyping(address)
         }
     }
 
@@ -131,8 +83,8 @@ export default function ChatInterface() {
                             key={match.wallet_address}
                             onClick={() => setSelectedMatch(match)}
                             className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${selectedMatch?.wallet_address === match.wallet_address
-                                    ? 'bg-purple-500/20'
-                                    : 'hover:bg-white/5'
+                                ? 'bg-purple-500/20'
+                                : 'hover:bg-white/5'
                                 }`}
                         >
                             <img
@@ -182,8 +134,8 @@ export default function ChatInterface() {
                                 >
                                     <div
                                         className={`max-w-[70%] px-4 py-2 rounded-lg ${message.sender_id === address
-                                                ? 'bg-gradient-to-r from-purple-500 to-pink-500'
-                                                : 'glass-panel'
+                                            ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                                            : 'glass-panel'
                                             }`}
                                     >
                                         <p>{message.content}</p>
@@ -196,6 +148,13 @@ export default function ChatInterface() {
                                     </div>
                                 </div>
                             ))}
+                            {isTyping && (
+                                <div className="flex justify-start">
+                                    <div className="glass-panel px-4 py-2 rounded-lg">
+                                        <p className="text-sm text-gray-400 italic">Typing...</p>
+                                    </div>
+                                </div>
+                            )}
                             <div ref={messagesEndRef} />
                         </div>
 
@@ -207,11 +166,14 @@ export default function ChatInterface() {
                                     placeholder="Type a message..."
                                     className="glass-input flex-1"
                                     value={newMessage}
-                                    onChange={e => setNewMessage(e.target.value)}
-                                    onKeyPress={e => e.key === 'Enter' && sendMessage()}
+                                    onChange={e => {
+                                        setNewMessage(e.target.value)
+                                        handleTyping()
+                                    }}
+                                    onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
                                 />
                                 <button
-                                    onClick={sendMessage}
+                                    onClick={handleSendMessage}
                                     disabled={!newMessage.trim()}
                                     className="glass-button px-4"
                                 >
