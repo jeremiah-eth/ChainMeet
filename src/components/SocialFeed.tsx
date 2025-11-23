@@ -140,14 +140,15 @@ export default function SocialFeed() {
         }
     }
 
-    const handleLike = async (profileId: string) => {
+    const handleLike = async (profileId: string, isSuperLike = false) => {
         if (!address) return
 
         try {
             await supabase.from('matches').insert({
                 user_id_1: address,
                 user_id_2: profileId,
-                status: 'pending'
+                status: 'pending',
+                is_super_like: isSuperLike
             })
 
             // Remove from feed
