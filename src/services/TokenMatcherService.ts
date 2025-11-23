@@ -66,8 +66,14 @@ export class TokenMatcherService {
     }
 
     calculateMatchScore(userTokens: string[], matchTokens: string[]) {
-        // TODO: Implement
-        return 0
+        let score = 0
+        const sharedTokens = userTokens.filter(token => matchTokens.includes(token))
+
+        // Base score for shared tokens
+        score += sharedTokens.length * 10
+
+        // Cap boost at 50 points
+        return Math.min(score, 50)
     }
 }
 
