@@ -197,16 +197,31 @@ export default function SocialFeed() {
                                     <Sparkles className="w-4 h-4 text-purple-400" />
                                     <span className="text-sm font-semibold">{Math.min(100, totalScore)}%</span>
                                 </div>
+                                import {Heart, MapPin, Sparkles, Star} from 'lucide-react'
+
+                                // ...
+
                                 {/* Like Button */}
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleLike(profile.wallet_address)
-                                    }}
-                                    className="absolute bottom-3 right-3 bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform"
-                                >
-                                    <Heart className="w-5 h-5" />
-                                </button>
+                                <div className="absolute bottom-3 right-3 flex gap-2">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleLike(profile.wallet_address, true)
+                                        }}
+                                        className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-yellow-500/25"
+                                    >
+                                        <Star className="w-5 h-5 text-white fill-white" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleLike(profile.wallet_address)
+                                        }}
+                                        className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-purple-500/25"
+                                    >
+                                        <Heart className="w-5 h-5 text-white fill-white" />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Info */}
