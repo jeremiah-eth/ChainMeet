@@ -23,9 +23,9 @@ export class TokenMatcherService {
                     abi: ERC20_ABI,
                     functionName: 'balanceOf',
                     args: [address as `0x${string}`]
-                })
+                }) as bigint
 
-                if (balance > 0n) {
+                if (balance > BigInt(0)) {
                     balances.push(symbol)
                 }
             } catch (error) {
@@ -52,9 +52,9 @@ export class TokenMatcherService {
                     abi: ERC721_ABI,
                     functionName: 'balanceOf',
                     args: [address as `0x${string}`]
-                })
+                }) as bigint
 
-                if (balance > 0n) {
+                if (balance > BigInt(0)) {
                     nfts.push(name)
                 }
             } catch (error) {
