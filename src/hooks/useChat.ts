@@ -80,6 +80,21 @@ export function useChat(matchId: string | null) {
         })
     }
 
+    const markAsRead = async (senderId: string) => {
+        if (!matchId) return
+
+        try {
+            await supabase
+                .from('messages')
+                .update({ read: true })
+                .eq('receiver_id', senderId) // The current user is the receiver
+                .eq('sender_id', matchId)
+                .eq('read', false)
+        } catch (err) {
+            console.error('Error marking messages as read:', err)
+        }
+    }
+
     return {
         messages,
         loading,
@@ -87,6 +102,7 @@ export function useChat(matchId: string | null) {
         sendMessage,
         setMessages,
         isTyping,
-        broadcastTyping
+        broadcastTyping,
+        markAsRead
     }
 }
