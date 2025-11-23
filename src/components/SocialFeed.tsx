@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 import { supabase } from '@/lib/supabase'
 import { Heart, MapPin, Sparkles } from 'lucide-react'
 import { tokenMatcher } from '@/services/TokenMatcherService'
+import { AssetBadge } from '@/components/feed/AssetBadge'
 
 interface Profile {
     wallet_address: string
@@ -18,6 +19,8 @@ interface Profile {
     photos: { url: string; sort_order: number }[]
     distance?: number
     matchScore?: number
+    commonTokens?: string[]
+    commonNFTs?: string[]
 }
 
 export default function SocialFeed() {
@@ -26,6 +29,7 @@ export default function SocialFeed() {
     const [loading, setLoading] = useState(true)
     const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
     const [matchScores, setMatchScores] = useState<Record<string, number>>({})
+    const [commonAssets, setCommonAssets] = useState<Record<string, { tokens: string[], nfts: string[] }>>({})
 
     useEffect(() => {
         fetchProfiles()
@@ -108,14 +112,25 @@ export default function SocialFeed() {
             // Calculate token match scores asynchronously
             if (address && enrichedProfiles.length > 0) {
                 const myTokens = await tokenMatcher.fetchTokenBalances(address)
+                const myNFTs = await tokenMatcher.fetchNFTs(address)
+
                 const scores: Record<string, number> = {}
+                const assets: Record<string, { tokens: string[], nfts: string[] }> = {}
 
                 for (const profile of enrichedProfiles) {
                     const theirTokens = await tokenMatcher.fetchTokenBalances(profile.wallet_address)
+                    const theirNFTs = await tokenMatcher.fetchNFTs(profile.wallet_address)
+
                     const tokenScore = tokenMatcher.calculateMatchScore(myTokens, theirTokens)
                     scores[profile.wallet_address] = tokenScore
+
+                    assets[profile.wallet_address] = {
+                        tokens: myTokens.filter(t => theirTokens.includes(t)),
+                        nfts: myNFTs.filter(n => theirNFTs.includes(n))
+                    }
                 }
                 setMatchScores(scores)
+                setCommonAssets(assets)
             }
 
         } catch (error) {
@@ -212,6 +227,18 @@ export default function SocialFeed() {
                                 )}
 
                                 <p className="text-sm text-gray-300 line-clamp-2">{profile.bio}</p>
+
+                                {/* Common Assets */}
+                                {commonAssets[profile.wallet_address] && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {commonAssets[profile.wallet_address].tokens.map(token => (
+                                            <AssetBadge key={token} symbol={token} type="token" />
+                                        ))}
+                                        {commonAssets[profile.wallet_address].nfts.map(nft => (
+                                            <AssetBadge key={nft} symbol={nft} type="nft" />
+                                        ))}
+                                    </div>
+                                )}
 
                                 {profile.interests && profile.interests.length > 0 && (
                                     <div className="flex flex-wrap gap-2">
