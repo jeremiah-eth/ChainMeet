@@ -37,8 +37,32 @@ export class TokenMatcherService {
     }
 
     async fetchNFTs(address: string) {
-        // TODO: Implement
-        return []
+        // Mock NFT collections for now, or add to constants
+        const NFT_COLLECTIONS = {
+            'Bored Ape': '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D',
+            'CryptoPunks': '0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB'
+        }
+
+        const nfts: string[] = []
+
+        for (const [name, contractAddress] of Object.entries(NFT_COLLECTIONS)) {
+            try {
+                const balance = await this.client.readContract({
+                    address: contractAddress as `0x${string}`,
+                    abi: ERC721_ABI,
+                    functionName: 'balanceOf',
+                    args: [address as `0x${string}`]
+                })
+
+                if (balance > 0n) {
+                    nfts.push(name)
+                }
+            } catch (error) {
+                console.error(`Error fetching ${name} balance:`, error)
+            }
+        }
+
+        return nfts
     }
 
     calculateMatchScore(userTokens: string[], matchTokens: string[]) {
