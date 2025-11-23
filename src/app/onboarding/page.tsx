@@ -144,6 +144,7 @@ export default function Onboarding() {
                 <PhotoUploader
                   userId={address}
                   onPhotosChange={photos => setFormData({ ...formData, photos })}
+                  maxPhotos={1}
                 />
               )}
               <div className="flex gap-4">

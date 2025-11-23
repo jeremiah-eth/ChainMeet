@@ -68,7 +68,7 @@ export function PhotoUploader({ userId, onPhotosChange, maxPhotos = 6 }: PhotoUp
                 )}
             </div>
             <p className="text-xs text-gray-400">
-                Upload up to {maxPhotos} photos. Supported formats: JPG, PNG.
+                Upload {maxPhotos} photo{maxPhotos > 1 ? 's' : ''}. Supported formats: JPG, PNG.
             </p>
         </div>
     )
