@@ -9,6 +9,7 @@ create table public.profiles (
   longitude float, -- For Geolocation
   gender text,
   interests text[], -- Array of strings
+  is_verified boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
