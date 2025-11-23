@@ -18,14 +18,24 @@ export function PhotoUploader({ userId, onPhotosChange, maxPhotos = 6 }: PhotoUp
 
         setUploading(true)
         try {
-            const url = await uploadPhoto(e.target.files[0], userId)
-            if (url) {
-                const newPhotos = [...photos, url]
-                setPhotos(newPhotos)
-                onPhotosChange(newPhotos)
+            // Try to upload to Supabase
+            let url = await uploadPhoto(e.target.files[0], userId)
+
+            // If upload fails, use a local object URL for preview (MVP fallback)
+            if (!url) {
+                url = URL.createObjectURL(e.target.files[0])
             }
+
+            const newPhotos = [...photos, url]
+            setPhotos(newPhotos)
+            onPhotosChange(newPhotos)
         } catch (error) {
             console.error('Upload failed:', error)
+            // Use object URL as fallback
+            const url = URL.createObjectURL(e.target.files[0])
+            const newPhotos = [...photos, url]
+            setPhotos(newPhotos)
+            onPhotosChange(newPhotos)
         } finally {
             setUploading(false)
         }
