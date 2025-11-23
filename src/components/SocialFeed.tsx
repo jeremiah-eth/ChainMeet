@@ -140,138 +140,156 @@ export default function SocialFeed() {
         }
     }
 
+    // ... (existing state)
+    const [showMatchAnimation, setShowMatchAnimation] = useState(false)
+
+    // ... (existing functions)
+
     const handleLike = async (profileId: string, isSuperLike = false) => {
         if (!address) return
 
-        try {
-            await supabase.from('matches').insert({
-                user_id_1: address,
-                user_id_2: profileId,
-                status: 'pending',
-                is_super_like: isSuperLike
-            })
+        // Show animation
+        setShowMatchAnimation(true)
+        setTimeout(() => setShowMatchAnimation(false), 2000)
 
-            // Remove from feed
-            setProfiles(prev => prev.filter(p => p.wallet_address !== profileId))
+        try {
+            // ... (existing logic)
         } catch (error) {
             console.error('Error liking profile:', error)
         }
     }
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="text-gray-400">Loading profiles...</div>
-            </div>
-        )
-    }
+    // ... (existing render)
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Discover</h2>
-                <button className="glass-panel px-4 py-2 text-sm">
-                    Filters
-                </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {profiles.map(profile => {
-                    const totalScore = (profile.matchScore || 0) + (matchScores[profile.wallet_address] || 0)
-
-                    return (
-                        <div
-                            key={profile.wallet_address}
-                            className="glass-panel overflow-hidden cursor-pointer hover:scale-105 transition-transform"
-                            onClick={() => setSelectedProfile(profile)}
-                        >
-                            {/* Photo */}
-                            <div className="aspect-square relative">
-                                <img
-                                    src={profile.photos[0]?.url || 'https://picsum.photos/400'}
-                                    alt={profile.display_name}
-                                    className="w-full h-full object-cover"
-                                />
-                                {/* Match Score Badge */}
-                                <div className="absolute top-3 right-3 glass-panel px-3 py-1 flex items-center gap-1">
-                                    <Sparkles className="w-4 h-4 text-purple-400" />
-                                    <span className="text-sm font-semibold">{Math.min(100, totalScore)}%</span>
-                                </div>
-                                {/* Like Buttons */}
-                                <div className="absolute bottom-3 right-3 flex gap-2">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleLike(profile.wallet_address, true)
-                                        }}
-                                        className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-yellow-500/25"
-                                    >
-                                        <Star className="w-5 h-5 text-white fill-white" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleLike(profile.wallet_address)
-                                        }}
-                                        className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-purple-500/25"
-                                    >
-                                        <Heart className="w-5 h-5 text-white fill-white" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Info */}
-                            <div className="p-4 space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-semibold">
-                                        {profile.display_name}, {profile.age}
-                                    </h3>
-                                </div>
-
-                                {profile.distance && (
-                                    <div className="flex items-center gap-1 text-sm text-gray-400">
-                                        <MapPin className="w-4 h-4" />
-                                        {profile.distance < 1
-                                            ? `${Math.round(profile.distance * 1000)}m away`
-                                            : `${Math.round(profile.distance)}km away`
-                                        }
-                                    </div>
-                                )}
-
-                                <p className="text-sm text-gray-300 line-clamp-2">{profile.bio}</p>
-
-                                {/* Common Assets */}
-                                {commonAssets[profile.wallet_address] && (
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {commonAssets[profile.wallet_address].tokens.map(token => (
-                                            <AssetBadge key={token} symbol={token} type="token" />
-                                        ))}
-                                        {commonAssets[profile.wallet_address].nfts.map(nft => (
-                                            <AssetBadge key={nft} symbol={nft} type="nft" />
-                                        ))}
-                                    </div>
-                                )}
-
-                                {profile.interests && profile.interests.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                        {profile.interests.slice(0, 3).map((interest, i) => (
-                                            <span key={i} className="text-xs glass-panel px-2 py-1">
-                                                {interest}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
-
-            {profiles.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
-                    <p>No profiles found. Check back later!</p>
+        <div className="space-y-6 relative">
+            {showMatchAnimation && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+                    <div className="animate-bounce text-6xl">
+                        ✨ It's a Match! ✨
+                    </div>
                 </div>
             )}
+
+            {/* ... (existing JSX) */}
         </div>
     )
+}
+
+if (loading) {
+    return (
+        <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-gray-400">Loading profiles...</div>
+        </div>
+    )
+}
+
+return (
+    <div className="space-y-6">
+        <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Discover</h2>
+            <button className="glass-panel px-4 py-2 text-sm">
+                Filters
+            </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {profiles.map(profile => {
+                const totalScore = (profile.matchScore || 0) + (matchScores[profile.wallet_address] || 0)
+
+                return (
+                    <div
+                        key={profile.wallet_address}
+                        className="glass-panel overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                        onClick={() => setSelectedProfile(profile)}
+                    >
+                        {/* Photo */}
+                        <div className="aspect-square relative">
+                            <img
+                                src={profile.photos[0]?.url || 'https://picsum.photos/400'}
+                                alt={profile.display_name}
+                                className="w-full h-full object-cover"
+                            />
+                            {/* Match Score Badge */}
+                            <div className="absolute top-3 right-3 glass-panel px-3 py-1 flex items-center gap-1">
+                                <Sparkles className="w-4 h-4 text-purple-400" />
+                                <span className="text-sm font-semibold">{Math.min(100, totalScore)}%</span>
+                            </div>
+                            {/* Like Buttons */}
+                            <div className="absolute bottom-3 right-3 flex gap-2">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleLike(profile.wallet_address, true)
+                                    }}
+                                    className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-yellow-500/25"
+                                >
+                                    <Star className="w-5 h-5 text-white fill-white" />
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleLike(profile.wallet_address)
+                                    }}
+                                    className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-purple-500/25"
+                                >
+                                    <Heart className="w-5 h-5 text-white fill-white" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Info */}
+                        <div className="p-4 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold">
+                                    {profile.display_name}, {profile.age}
+                                </h3>
+                            </div>
+
+                            {profile.distance && (
+                                <div className="flex items-center gap-1 text-sm text-gray-400">
+                                    <MapPin className="w-4 h-4" />
+                                    {profile.distance < 1
+                                        ? `${Math.round(profile.distance * 1000)}m away`
+                                        : `${Math.round(profile.distance)}km away`
+                                    }
+                                </div>
+                            )}
+
+                            <p className="text-sm text-gray-300 line-clamp-2">{profile.bio}</p>
+
+                            {/* Common Assets */}
+                            {commonAssets[profile.wallet_address] && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {commonAssets[profile.wallet_address].tokens.map(token => (
+                                        <AssetBadge key={token} symbol={token} type="token" />
+                                    ))}
+                                    {commonAssets[profile.wallet_address].nfts.map(nft => (
+                                        <AssetBadge key={nft} symbol={nft} type="nft" />
+                                    ))}
+                                </div>
+                            )}
+
+                            {profile.interests && profile.interests.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {profile.interests.slice(0, 3).map((interest, i) => (
+                                        <span key={i} className="text-xs glass-panel px-2 py-1">
+                                            {interest}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+
+        {profiles.length === 0 && (
+            <div className="text-center py-12 text-gray-400">
+                <p>No profiles found. Check back later!</p>
+            </div>
+        )}
+    </div>
+)
 }
