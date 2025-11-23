@@ -54,16 +54,16 @@ export default function Home() {
             <div className="min-h-screen flex items-center justify-center p-4">
                 <div className="glass-panel p-12 text-center space-y-6 max-w-md">
                     <div className="flex justify-center">
-                        <Sparkles className="w-16 h-16 text-purple-400" />
+                        <Sparkles className="w-16 h-16 text-blue-500" />
                     </div>
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    <h1 className="text-4xl font-bold text-gradient">
                         ChainMeet
                     </h1>
-                    <p className="text-gray-300">
+                    <p className="text-gray-700">
                         The wallet-based dating app where crypto meets connection
                     </p>
                     <appkit-button />
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-600">
                         Connect your wallet to get started
                     </p>
                 </div>
@@ -74,7 +74,7 @@ export default function Home() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="text-gray-400">Loading...</div>
+                <div className="text-gray-600">Loading...</div>
             </div>
         )
     }
@@ -84,7 +84,7 @@ export default function Home() {
             {/* Header */}
             <header className="glass-panel sticky top-0 z-40">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    <h1 className="text-2xl font-bold text-gradient">
                         ChainMeet
                     </h1>
                     <appkit-button />
@@ -118,7 +118,7 @@ export default function Home() {
                 <div className="grid grid-cols-4 gap-1 p-2">
                     <button
                         onClick={() => setActiveTab('feed')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'feed' ? 'bg-purple-500/20 text-purple-400' : 'text-gray-400'
+                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'feed' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
                             }`}
                     >
                         <Heart className="w-6 h-6" />
@@ -126,7 +126,7 @@ export default function Home() {
                     </button>
                     <button
                         onClick={() => setActiveTab('matches')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'matches' ? 'bg-purple-500/20 text-purple-400' : 'text-gray-400'
+                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'matches' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
                             }`}
                     >
                         <MessageCircle className="w-6 h-6" />
@@ -134,7 +134,7 @@ export default function Home() {
                     </button>
                     <button
                         onClick={() => setActiveTab('wallet')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'wallet' ? 'bg-purple-500/20 text-purple-400' : 'text-gray-400'
+                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'wallet' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
                             }`}
                     >
                         <Wallet className="w-6 h-6" />
@@ -142,7 +142,7 @@ export default function Home() {
                     </button>
                     <button
                         onClick={() => setActiveTab('settings')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-purple-500/20 text-purple-400' : 'text-gray-400'
+                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
                             }`}
                     >
                         <Settings className="w-6 h-6" />
