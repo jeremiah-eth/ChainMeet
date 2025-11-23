@@ -1,82 +1,41 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAccount } from 'wagmi'
 import { useRouter } from 'next/navigation'
+import { useAccount, useSignMessage } from 'wagmi'
 import { supabase } from '@/lib/supabase'
-import { Camera, MapPin, Upload, X } from 'lucide-react'
+import { PhotoUploader } from '@/components/onboarding/PhotoUploader'
+import { InterestSelector } from '@/components/onboarding/InterestSelector'
+import { generateVerificationMessage } from '@/lib/auth'
 
 export default function Onboarding() {
-  const { address, isConnected } = useAccount()
   const router = useRouter()
+  const { address } = useAccount()
+  const { signMessageAsync } = useSignMessage()
+
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
-
   const [formData, setFormData] = useState({
     displayName: '',
-    bio: '',
     age: '',
+    bio: '',
     location: '',
-    latitude: null as number | null,
-    longitude: null as number | null,
-    gender: '',
-    interests: [] as string[],
-    photos: [] as string[]
+    photos: [] as string[],
+    interests: [] as string[]
   })
 
-  const [currentInterest, setCurrentInterest] = useState('')
-
   useEffect(() => {
-    if (!isConnected) {
+    if (!address) {
       router.push('/')
     }
-  }, [isConnected, router])
+  }, [address, router])
 
   const handleNext = () => {
-    if (step < 3) setStep(step + 1)
-    else handleSubmit()
+    setStep(prev => prev + 1)
   }
 
-  const canProceed = () => {
-    if (step === 1) return formData.displayName && formData.age && formData.bio
-    if (step === 2) return formData.photos.length >= 2
-    if (step === 3) return formData.latitude !== null && formData.longitude !== null
-    return false
-  }
-
-  const handleLocation = () => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords
-        setFormData(prev => ({
-          ...prev,
-          latitude,
-          longitude,
-          location: `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`
-        }))
-      }, (error) => {
-        alert('Unable to get location. Please enable location services.')
-      })
-    } else {
-      alert('Geolocation is not supported by your browser.')
-    }
-  }
-
-  const addInterest = () => {
-    if (currentInterest.trim() && formData.interests.length < 10) {
-      setFormData(prev => ({
-        ...prev,
-        interests: [...prev.interests, currentInterest.trim()]
-      }))
-      setCurrentInterest('')
-    }
-  }
-
-  const removeInterest = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      interests: prev.interests.filter((_, i) => i !== index)
-    }))
+  const handleBack = () => {
+    setStep(prev => prev - 1)
   }
 
   const handleSubmit = async () => {
@@ -84,86 +43,153 @@ export default function Onboarding() {
     setLoading(true)
 
     try {
-      const { error: profileError } = await supabase
+      // Verify wallet ownership
+      const message = generateVerificationMessage(address)
+      const signature = await signMessageAsync({ message })
+
+      // Create profile
+      const { error } = await supabase
         .from('profiles')
         .upsert({
           wallet_address: address,
           display_name: formData.displayName,
-          bio: formData.bio,
           age: parseInt(formData.age),
+          bio: formData.bio,
           location: formData.location,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-                < div key = { i } className = "aspect-square glass-panel flex items-center justify-center relative overflow-hidden" >
-        {
-          formData.photos[i] ? (
-            <>
-              <img src={formData.photos[i]} alt="Upload" className="w-full h-full object-cover rounded-lg" />
+          interests: formData.interests,
+          is_verified: true
+        })
+
+      if (error) throw error
+
+      // Save photos
+      if (formData.photos.length > 0) {
+        const photosData = formData.photos.map((url, index) => ({
+          user_id: address,
+          url,
+          sort_order: index
+        }))
+
+        const { error: photosError } = await supabase
+          .from('photos')
+          .insert(photosData)
+
+        if (photosError) throw photosError
+      }
+
+      router.push('/feed')
+    } catch (error) {
+      console.error('Error creating profile:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 text-white p-6">
+      <div className="max-w-md mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+            Create Profile
+          </h1>
+          <p className="text-gray-400">Step {step} of 3</p>
+        </div>
+
+        <div className="glass-panel p-6 space-y-6">
+          {step === 1 && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Display Name</label>
+                <input
+                  type="text"
+                  value={formData.displayName}
+                  onChange={e => setFormData({ ...formData, displayName: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500"
+                  placeholder="CryptoKing"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Age</label>
+                <input
+                  type="number"
+                  value={formData.age}
+                  onChange={e => setFormData({ ...formData, age: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500"
+                  placeholder="25"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Bio</label>
+                <textarea
+                  value={formData.bio}
+                  onChange={e => setFormData({ ...formData, bio: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500 h-24"
+                  placeholder="Tell us about yourself..."
+                />
+              </div>
               <button
-                onClick={() => removePhoto(i)}
-                className="absolute top-2 right-2 bg-red-500 rounded-full p-1"
+                onClick={handleNext}
+                disabled={!formData.displayName || !formData.age}
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 py-3 rounded-lg font-bold hover:opacity-90 disabled:opacity-50"
               >
-                <X className="w-4 h-4" />
+                Next
               </button>
-            </>
-          ) : (
-            <Camera className="text-gray-400" />
-          )
-        }
-                </div >
-              ))
-}
-            </div >
-            <p className="text-xs text-gray-400 text-center">Upload feature coming soon. Using mock photos for now.</p>
-            <button
-              type="button"
-              className="glass-button w-full"
-              onClick={addMockPhoto}
-              disabled={formData.photos.length >= 4}
-            >
-              <Upload className="w-4 h-4 inline mr-2" />
-              Add Mock Photo
-            </button>
-          </div >
-        )}
+            </div>
+          )}
 
-{
-  step === 3 && (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Location</h2>
-      <p className="text-gray-400 text-sm">We use your location to find matches nearby.</p>
-      <button
-        onClick={handleLocation}
-        className={`w-full glass-panel p-4 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors ${formData.latitude ? 'border-purple-500' : ''}`}
-      >
-        <MapPin className={formData.latitude ? "text-purple-500" : "text-gray-400"} />
-        <span>{formData.location || "Enable Location"}</span>
-      </button>
-      {formData.latitude && (
-        <p className="text-xs text-green-400 text-center">✓ Location enabled</p>
-      )}
+          {step === 2 && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold">Add Photos</h3>
+              {address && (
+                <PhotoUploader
+                  userId={address}
+                  onPhotosChange={photos => setFormData({ ...formData, photos })}
+                />
+              )}
+              <div className="flex gap-4">
+                <button
+                  onClick={handleBack}
+                  className="flex-1 bg-white/10 py-3 rounded-lg font-bold hover:bg-white/20"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={formData.photos.length === 0}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 py-3 rounded-lg font-bold hover:opacity-90 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold">Select Interests</h3>
+              <InterestSelector
+                selectedInterests={formData.interests}
+                onChange={interests => setFormData({ ...formData, interests })}
+              />
+              <div className="flex gap-4">
+                <button
+                  onClick={handleBack}
+                  className="flex-1 bg-white/10 py-3 rounded-lg font-bold hover:bg-white/20"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || formData.interests.length === 0}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 py-3 rounded-lg font-bold hover:opacity-90 disabled:opacity-50"
+                >
+                  {loading ? 'Creating Profile...' : 'Complete Profile'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-  )
-}
-
-<div className="mt-8 flex justify-between items-center">
-  {step > 1 && (
-    <button
-      onClick={() => setStep(step - 1)}
-      className="text-gray-400 hover:text-white transition-colors"
-    >
-      Back
-    </button>
-  )}
-  <button
-    onClick={handleNext}
-    disabled={loading || !canProceed()}
-    className="glass-button ml-auto"
-  >
-    {loading ? 'Saving...' : step === 3 ? 'Finish' : 'Next'}
-  </button>
-</div>
-      </div >
-    </div >
   )
 }
