@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { supabase } from '@/lib/supabase'
-import { Heart, MapPin, Sparkles } from 'lucide-react'
+import { Heart, MapPin, Sparkles, Star } from 'lucide-react'
 import { tokenMatcher } from '@/services/TokenMatcherService'
 import { AssetBadge } from '@/components/feed/AssetBadge'
 
@@ -197,11 +197,7 @@ export default function SocialFeed() {
                                     <Sparkles className="w-4 h-4 text-purple-400" />
                                     <span className="text-sm font-semibold">{Math.min(100, totalScore)}%</span>
                                 </div>
-                                import {Heart, MapPin, Sparkles, Star} from 'lucide-react'
-
-                                // ...
-
-                                {/* Like Button */}
+                                {/* Like Buttons */}
                                 <div className="absolute bottom-3 right-3 flex gap-2">
                                     <button
                                         onClick={(e) => {
