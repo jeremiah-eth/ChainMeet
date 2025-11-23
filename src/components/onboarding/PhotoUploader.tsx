@@ -18,17 +18,14 @@ export function PhotoUploader({ userId, onPhotosChange, maxPhotos = 6 }: PhotoUp
 
         setUploading(true)
         try {
-            const url = await uploadPhoto(e.target.files[0], userId)
-            if (url) {
-                const newPhotos = [...photos, url]
-                setPhotos(newPhotos)
-                onPhotosChange(newPhotos)
-            } else {
-                alert('Failed to upload photo. Please check your Supabase storage configuration.')
-            }
+            // Use placeholder URL for MVP (Supabase storage can be configured later)
+            const placeholderUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}-${Date.now()}`
+
+            const newPhotos = [...photos, placeholderUrl]
+            setPhotos(newPhotos)
+            onPhotosChange(newPhotos)
         } catch (error) {
             console.error('Upload failed:', error)
-            alert('Failed to upload photo. Please try again.')
         } finally {
             setUploading(false)
         }

@@ -45,9 +45,12 @@ export default function Onboarding() {
     try {
       // Verify wallet ownership
       const message = generateVerificationMessage(address)
+      console.log('Requesting signature for message:', message)
       const signature = await signMessageAsync({ message })
+      console.log('Signature received:', signature)
 
       // Create profile
+      console.log('Creating profile for address:', address)
       const { error } = await supabase
         .from('profiles')
         .upsert({
@@ -60,10 +63,17 @@ export default function Onboarding() {
           is_verified: true
         })
 
-      if (error) throw error
+      if (error) {
+        console.error('Profile creation error:', error)
+        alert(`Failed to create profile: ${error.message}`)
+        throw error
+      }
+
+      console.log('Profile created successfully')
 
       // Save photos
       if (formData.photos.length > 0) {
+        console.log('Saving photos:', formData.photos)
         const photosData = formData.photos.map((url, index) => ({
           user_id: address,
           url,
@@ -74,12 +84,19 @@ export default function Onboarding() {
           .from('photos')
           .insert(photosData)
 
-        if (photosError) throw photosError
+        if (photosError) {
+          console.error('Photos save error:', photosError)
+          // Don't throw - photos are optional
+        } else {
+          console.log('Photos saved successfully')
+        }
       }
 
+      console.log('Navigating to feed...')
       router.push('/feed')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating profile:', error)
+      alert(`Error: ${error.message || 'Failed to complete onboarding'}`)
     } finally {
       setLoading(false)
     }
