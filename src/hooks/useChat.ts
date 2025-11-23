@@ -54,10 +54,30 @@ export function useChat(matchId: string | null) {
         }
     }, [matchId])
 
+    const sendMessage = async (content: string, senderId: string) => {
+        if (!matchId || !content.trim()) return
+
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .insert({
+                    sender_id: senderId,
+                    receiver_id: matchId,
+                    content: content.trim()
+                })
+
+            if (error) throw error
+        } catch (err) {
+            console.error('Error sending message:', err)
+            setError('Failed to send message')
+        }
+    }
+
     return {
         messages,
         loading,
         error,
+        sendMessage,
         setMessages
     }
 }
