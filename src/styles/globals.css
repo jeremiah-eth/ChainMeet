@@ -1,19 +1,63 @@
 :root {
-  --foreground-rgb: 30, 41, 59;
-  --background-start-rgb: 248, 250, 252;
-  --background-end-rgb: 241, 245, 249;
+  /* New Gradient Color Palette - Yellow-Green to Purple-Blue */
+  --bg-gradient-start: #F0F9E8;
+  /* Light yellow-green */
+  --bg-gradient-mid: #E8F5E9;
+  /* Soft green */
+  --bg-gradient-end: #E8E5F9;
+  /* Light purple */
 
-  --accent-primary: #3B82F6;
-  /* Blue */
-  --accent-secondary: #60A5FA;
-  /* Light Blue */
-  --accent-dark: #1E40AF;
-  /* Dark Blue */
-  --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(59, 130, 246, 0.2);
-  --text-primary: #1E293B;
-  --text-secondary: #64748B;
+  /* Primary Colors */
+  --color-purple: #8B7FD9;
+  /* Main purple */
+  --color-purple-light: #A599E9;
+  --color-purple-dark: #6B5FB9;
+
+  --color-pink: #FF6B9D;
+  /* Accent pink */
+  --color-pink-light: #FF8FB5;
+  --color-pink-dark: #E5527D;
+
+  --color-yellow: #FFD93D;
+  /* Accent yellow */
+  --color-yellow-light: #FFE66D;
+  --color-yellow-dark: #F5C518;
+
+  --color-green: #6BCF7F;
+  /* Accent green */
+  --color-green-light: #8FE19F;
+  --color-green-dark: #4BAF5F;
+
+  /* Gradient Combinations */
+  --gradient-primary: linear-gradient(135deg, var(--color-purple), var(--color-pink));
+  --gradient-secondary: linear-gradient(135deg, var(--color-yellow), #FFA500);
+  --gradient-accent: linear-gradient(135deg, var(--color-green), var(--color-purple));
+  --gradient-bg: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+
+  /* Text Colors */
+  --text-primary: #2D2D2D;
+  --text-secondary: #6B6B6B;
+  --text-light: #FFFFFF;
+  --text-muted: #9E9E9E;
+
+  /* Glass/Card Backgrounds */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg-light: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(139, 127, 217, 0.15);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(139, 127, 217, 0.08);
+  --shadow-md: 0 4px 16px rgba(139, 127, 217, 0.12);
+  --shadow-lg: 0 8px 32px rgba(139, 127, 217, 0.16);
+  --shadow-xl: 0 12px 48px rgba(139, 127, 217, 0.2);
+
+  /* Legacy support (will be phased out) */
+  --foreground-rgb: 45, 45, 45;
+  --accent-primary: var(--color-purple);
+  --accent-secondary: var(--color-pink);
+  --accent-dark: var(--color-purple-dark);
 }
+
 
 body {
   color: rgb(var(--foreground-rgb));
