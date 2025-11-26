@@ -70,11 +70,18 @@ body {
 /* Glassmorphism Utilities */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
 }
+
+.glass-panel-light {
+  background: var(--glass-bg-light);
+  box-shadow: var(--shadow-sm);
+}
+
 
 .glass-button {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
