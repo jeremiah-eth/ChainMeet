@@ -1,7 +1,7 @@
-'use client'
-
 import { Profile } from '@/types/profile'
 import { CSSProperties } from 'react'
+import { MapPin } from 'lucide-react'
+
 
 interface ProfileCardProps {
     profile: Profile
@@ -36,6 +36,37 @@ export default function ProfileCard({
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
                 <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             </div>
+
+            {/* Info Overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
+                <div className="flex items-end justify-between mb-2">
+                    <div>
+                        <h2 className="text-3xl font-bold flex items-center gap-2 drop-shadow-md">
+                            {profile.display_name}
+                            <span className="text-2xl font-normal opacity-90">{profile.age}</span>
+                        </h2>
+
+                        {profile.distance !== undefined && (
+                            <div className="flex items-center gap-1 text-sm text-gray-200 mt-1 drop-shadow-sm">
+                                <MapPin className="w-4 h-4" />
+                                <span>
+                                    {profile.distance < 1
+                                        ? `${Math.round(profile.distance * 1000)}m away`
+                                        : `${Math.round(profile.distance)}km away`
+                                    }
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {profile.bio && (
+                    <p className="text-gray-200 text-sm line-clamp-2 mb-4 opacity-90 drop-shadow-sm">
+                        {profile.bio}
+                    </p>
+                )}
+            </div>
         </div>
     )
 }
+
