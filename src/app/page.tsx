@@ -10,6 +10,8 @@ import WalletCard from '@/components/WalletCard'
 import SettingsProfile from '@/components/SettingsProfile'
 import { supabase } from '@/lib/supabase'
 import Header from '@/components/layout/Header'
+import BottomNav from '@/components/layout/BottomNav'
+import Sidebar from '@/components/layout/Sidebar'
 
 type Tab = 'feed' | 'matches' | 'wallet' | 'settings'
 
@@ -108,70 +110,10 @@ export default function Home() {
             </main>
 
             {/* Bottom Navigation - Mobile */}
-            <nav className="fixed bottom-0 left-0 right-0 glass-panel lg:hidden">
-                <div className="grid grid-cols-4 gap-1 p-2">
-                    <button
-                        onClick={() => setActiveTab('feed')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'feed' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
-                            }`}
-                    >
-                        <Heart className="w-6 h-6" />
-                        <span className="text-xs">Discover</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('matches')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'matches' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
-                            }`}
-                    >
-                        <MessageCircle className="w-6 h-6" />
-                        <span className="text-xs">Matches</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('wallet')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'wallet' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
-                            }`}
-                    >
-                        <Wallet className="w-6 h-6" />
-                        <span className="text-xs">Wallet</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500/20 text-blue-600' : 'text-gray-600'
-                            }`}
-                    >
-                        <Settings className="w-6 h-6" />
-                        <span className="text-xs">Settings</span>
-                    </button>
-                </div>
-            </nav>
+            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
             {/* Desktop Tab Navigation */}
-            <div className="hidden lg:block fixed top-24 left-8 space-y-2">
-                <button
-                    onClick={() => setActiveTab('feed')}
-                    className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-colors ${activeTab === 'feed' ? 'glass-button' : 'glass-panel hover:bg-white/5'
-                        }`}
-                >
-                    <Heart className="w-5 h-5" />
-                    <span>Discover</span>
-                </button>
-                <button
-                    onClick={() => setActiveTab('matches')}
-                    className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-colors ${activeTab === 'matches' ? 'glass-button' : 'glass-panel hover:bg-white/5'
-                        }`}
-                >
-                    <MessageCircle className="w-5 h-5" />
-                    <span>Matches</span>
-                </button>
-                <button
-                    onClick={() => setActiveTab('settings')}
-                    className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'glass-button' : 'glass-panel hover:bg-white/5'
-                        }`}
-                >
-                    <Settings className="w-5 h-5" />
-                    <span>Settings</span>
-                </button>
-            </div>
+            <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
     )
 }
