@@ -6,6 +6,7 @@ export interface MatchBadgeProps {
     percentage: number
     size?: 'sm' | 'md' | 'lg'
     showIcon?: boolean
+    animated?: boolean
     className?: string
 }
 
@@ -13,6 +14,7 @@ export default function MatchBadge({
     percentage,
     size = 'md',
     showIcon = true,
+    animated = true,
     className = ''
 }: MatchBadgeProps) {
     const getBadgeVariant = (score: number) => {
@@ -24,17 +26,19 @@ export default function MatchBadge({
 
     const sizeClass = size !== 'md' ? `match-badge-${size}` : ''
     const variantClass = getBadgeVariant(percentage)
+    const animationClass = animated ? 'animate-scale-in' : ''
 
     const classes = [
         'match-badge',
         sizeClass,
         variantClass,
+        animationClass,
         className
     ].filter(Boolean).join(' ')
 
     return (
         <div className={classes}>
-            {showIcon && <Sparkles />}
+            {showIcon && <Sparkles className={percentage >= 90 ? "animate-pulse" : ""} />}
             <span>{percentage}%</span>
         </div>
     )
