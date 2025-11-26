@@ -23,7 +23,7 @@ export default function SwipeActions({
             <button
                 onClick={onPass}
                 disabled={disabled}
-                className="action-button action-button-lg action-button-pass"
+                className="action-button action-button-lg action-button-pass animate-scale-in"
                 aria-label="Pass"
             >
                 <X className="w-8 h-8" />
@@ -33,7 +33,7 @@ export default function SwipeActions({
             <button
                 onClick={onSuperLike}
                 disabled={disabled}
-                className="action-button action-button-sm action-button-super"
+                className="action-button action-button-sm action-button-super animate-scale-in animation-delay-100"
                 aria-label="Super Like"
             >
                 <Star className="w-5 h-5 fill-white" />
@@ -43,11 +43,12 @@ export default function SwipeActions({
             <button
                 onClick={onLike}
                 disabled={disabled}
-                className="action-button action-button-lg action-button-like"
+                className="action-button action-button-lg action-button-like animate-scale-in animation-delay-200"
                 aria-label="Like"
             >
                 <Heart className="w-8 h-8 fill-white" />
             </button>
+
         </div>
     )
 }
