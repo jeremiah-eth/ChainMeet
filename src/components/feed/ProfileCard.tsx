@@ -1,7 +1,8 @@
 import { Profile } from '@/types/profile'
 import { CSSProperties } from 'react'
 import { MapPin } from 'lucide-react'
-import { PillTag } from '@/components/shared'
+import { PillTag, MatchBadge } from '@/components/shared'
+
 
 
 
@@ -39,7 +40,19 @@ export default function ProfileCard({
                 <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             </div>
 
+            {/* Match Badge */}
+            {profile.matchScore !== undefined && (
+                <div className="absolute top-4 right-4 z-20">
+                    <MatchBadge
+                        percentage={profile.matchScore}
+                        size="lg"
+                        className="shadow-lg"
+                    />
+                </div>
+            )}
+
             {/* Info Overlay */}
+
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
                 <div className="flex items-end justify-between mb-2">
                     <div>
