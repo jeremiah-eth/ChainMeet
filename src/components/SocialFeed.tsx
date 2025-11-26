@@ -3,39 +3,27 @@
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { supabase } from '@/lib/supabase'
-import { Heart, MapPin, Sparkles, Star } from 'lucide-react'
 import { tokenMatcher } from '@/services/TokenMatcherService'
-import { AssetBadge } from '@/components/feed/AssetBadge'
+import ProfileCard from '@/components/feed/ProfileCard'
+import SwipeActions from '@/components/feed/SwipeActions'
+import { Profile } from '@/types/profile'
 
-interface Profile {
-    wallet_address: string
-    display_name: string
-    age: number
-    bio: string
-    location: string
-    latitude: number | null
-    longitude: number | null
-    interests: string[]
-    photos: { url: string; sort_order: number }[]
-    distance?: number
-    matchScore?: number
-    commonTokens?: string[]
-    commonNFTs?: string[]
-}
+
+
 
 export default function SocialFeed() {
     const { address } = useAccount()
     const [profiles, setProfiles] = useState<Profile[]>([])
     const [loading, setLoading] = useState(true)
-    const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
     const [matchScores, setMatchScores] = useState<Record<string, number>>({})
-    const [commonAssets, setCommonAssets] = useState<Record<string, { tokens: string[], nfts: string[] }>>({})
     const [showMatchAnimation, setShowMatchAnimation] = useState(false)
+    const [currentIndex, setCurrentIndex] = useState(0)
 
     useEffect(() => {
         fetchProfiles()
     }, [address])
 
+    // ... (keep existing calculateDistance and fetchProfiles logic) ...
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const R = 6371 // Earth's radius in km
         const dLat = (lat2 - lat1) * Math.PI / 180
@@ -113,25 +101,15 @@ export default function SocialFeed() {
             // Calculate token match scores asynchronously
             if (address && enrichedProfiles.length > 0) {
                 const myTokens = await tokenMatcher.fetchTokenBalances(address)
-                const myNFTs = await tokenMatcher.fetchNFTs(address)
 
                 const scores: Record<string, number> = {}
-                const assets: Record<string, { tokens: string[], nfts: string[] }> = {}
 
                 for (const profile of enrichedProfiles) {
                     const theirTokens = await tokenMatcher.fetchTokenBalances(profile.wallet_address)
-                    const theirNFTs = await tokenMatcher.fetchNFTs(profile.wallet_address)
-
                     const tokenScore = tokenMatcher.calculateMatchScore(myTokens, theirTokens)
                     scores[profile.wallet_address] = tokenScore
-
-                    assets[profile.wallet_address] = {
-                        tokens: myTokens.filter(t => theirTokens.includes(t)),
-                        nfts: myNFTs.filter(n => theirNFTs.includes(n))
-                    }
                 }
                 setMatchScores(scores)
-                setCommonAssets(assets)
             }
 
         } catch (error) {
@@ -141,150 +119,109 @@ export default function SocialFeed() {
         }
     }
 
-    const handleLike = async (profileId: string, isSuperLike = false) => {
-        if (!address) return
+    const handleSwipe = async (direction: 'left' | 'right' | 'up') => {
+        if (!address || currentIndex >= profiles.length) return
 
-        // Show animation
-        setShowMatchAnimation(true)
-        setTimeout(() => setShowMatchAnimation(false), 2000)
+        const profile = profiles[currentIndex]
+        const isLike = direction === 'right'
+        const isSuperLike = direction === 'up'
 
-        try {
-            await supabase.from('matches').insert({
-                user_id_1: address,
-                user_id_2: profileId,
-                status: 'pending',
-                is_super_like: isSuperLike
-            })
+        // Advance to next card
+        setCurrentIndex(prev => prev + 1)
 
-            // Remove from feed
-            setProfiles(prev => prev.filter(p => p.wallet_address !== profileId))
-        } catch (error) {
-            console.error('Error liking profile:', error)
+        if (isLike || isSuperLike) {
+            // Show animation
+            setShowMatchAnimation(true)
+            setTimeout(() => setShowMatchAnimation(false), 2000)
+
+            try {
+                await supabase.from('matches').insert({
+                    user_id_1: address,
+                    user_id_2: profile.wallet_address,
+                    status: 'pending',
+                    is_super_like: isSuperLike
+                })
+            } catch (error) {
+                console.error('Error liking profile:', error)
+            }
         }
     }
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="text-gray-400">Loading profiles...</div>
+            <div className="flex items-center justify-center min-h-[600px]">
+                <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        )
+    }
+
+    const currentProfile = profiles[currentIndex]
+    const nextProfile = profiles[currentIndex + 1]
+
+    if (!currentProfile) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[600px] text-center p-8">
+                <div className="text-6xl mb-4">🎉</div>
+                <h2 className="text-2xl font-bold mb-2">You're all caught up!</h2>
+                <p className="text-gray-500">Check back later for more profiles.</p>
             </div>
         )
     }
 
     return (
-        <div className="space-y-6 relative">
+        <div className="max-w-md mx-auto h-[700px] flex flex-col relative">
             {showMatchAnimation && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-                    <div className="animate-bounce text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 drop-shadow-lg">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none bg-black/20 backdrop-blur-sm animate-fade-in">
+                    <div className="animate-match text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 drop-shadow-lg">
                         ✨ It's a Match! ✨
                     </div>
                 </div>
             )}
 
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Discover</h2>
-                <button className="glass-panel px-4 py-2 text-sm">
+            <div className="flex items-center justify-between mb-4 px-4">
+                <h2 className="text-2xl font-bold text-gradient">Discover</h2>
+                <button className="glass-panel px-4 py-2 text-sm hover:bg-white/10 transition-colors">
                     Filters
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {profiles.map(profile => {
-                    const totalScore = (profile.matchScore || 0) + (matchScores[profile.wallet_address] || 0)
+            {/* Card Stack */}
+            <div className="flex-1 relative w-full mb-6">
+                {/* Next Card (Background) */}
+                {nextProfile && (
+                    <div className="absolute inset-0 transform scale-95 translate-y-4 opacity-60 pointer-events-none">
+                        <ProfileCard
+                            profile={{
+                                ...nextProfile,
+                                matchScore: (nextProfile.matchScore || 0) + (matchScores[nextProfile.wallet_address] || 0)
+                            }}
+                        />
+                    </div>
+                )}
 
-                    return (
-                        <div
-                            key={profile.wallet_address}
-                            className="glass-panel overflow-hidden cursor-pointer hover:scale-105 transition-transform"
-                            onClick={() => setSelectedProfile(profile)}
-                        >
-                            {/* Photo */}
-                            <div className="aspect-square relative">
-                                <img
-                                    src={profile.photos[0]?.url || 'https://picsum.photos/400'}
-                                    alt={profile.display_name}
-                                    className="w-full h-full object-cover"
-                                />
-                                {/* Match Score Badge */}
-                                <div className="absolute top-3 right-3 glass-panel px-3 py-1 flex items-center gap-1">
-                                    <Sparkles className="w-4 h-4 text-purple-400" />
-                                    <span className="text-sm font-semibold">{Math.min(100, totalScore)}%</span>
-                                </div>
-                                {/* Like Buttons */}
-                                <div className="absolute bottom-3 right-3 flex gap-2">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleLike(profile.wallet_address, true)
-                                        }}
-                                        className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-yellow-500/25"
-                                    >
-                                        <Star className="w-5 h-5 text-white fill-white" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleLike(profile.wallet_address)
-                                        }}
-                                        className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg shadow-purple-500/25"
-                                    >
-                                        <Heart className="w-5 h-5 text-white fill-white" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Info */}
-                            <div className="p-4 space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-semibold">
-                                        {profile.display_name}, {profile.age}
-                                    </h3>
-                                </div>
-
-                                {profile.distance && (
-                                    <div className="flex items-center gap-1 text-sm text-gray-400">
-                                        <MapPin className="w-4 h-4" />
-                                        {profile.distance < 1
-                                            ? `${Math.round(profile.distance * 1000)}m away`
-                                            : `${Math.round(profile.distance)}km away`
-                                        }
-                                    </div>
-                                )}
-
-                                <p className="text-sm text-gray-300 line-clamp-2">{profile.bio}</p>
-
-                                {/* Common Assets */}
-                                {commonAssets[profile.wallet_address] && (
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {commonAssets[profile.wallet_address].tokens.map(token => (
-                                            <AssetBadge key={token} symbol={token} type="token" />
-                                        ))}
-                                        {commonAssets[profile.wallet_address].nfts.map(nft => (
-                                            <AssetBadge key={nft} symbol={nft} type="nft" />
-                                        ))}
-                                    </div>
-                                )}
-
-                                {profile.interests && profile.interests.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                        {profile.interests.slice(0, 3).map((interest, i) => (
-                                            <span key={i} className="text-xs glass-panel px-2 py-1">
-                                                {interest}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )
-                })}
+                {/* Current Card (Foreground) */}
+                <div className="absolute inset-0 z-10">
+                    <ProfileCard
+                        profile={{
+                            ...currentProfile,
+                            matchScore: (currentProfile.matchScore || 0) + (matchScores[currentProfile.wallet_address] || 0)
+                        }}
+                        active={true}
+                        onSwipe={handleSwipe}
+                        className="shadow-2xl"
+                    />
+                </div>
             </div>
 
-            {profiles.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
-                    <p>No profiles found. Check back later!</p>
-                </div>
-            )}
+            {/* Swipe Actions */}
+            <div className="pb-4">
+                <SwipeActions
+                    onPass={() => handleSwipe('left')}
+                    onLike={() => handleSwipe('right')}
+                    onSuperLike={() => handleSwipe('up')}
+                />
+            </div>
         </div>
     )
 }
+
