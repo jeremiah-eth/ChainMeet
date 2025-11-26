@@ -146,14 +146,20 @@ export default function ProfileView({ profile, onClose }: ProfileViewProps) {
                         <div>
                             <h3 className="text-lg font-semibold mb-3 text-gray-300">Interests</h3>
                             <div className="flex flex-wrap gap-2">
-                                {profile.interests.map((interest, i) => (
-                                    <PillTag key={i} size="md" className="bg-white/5 border-white/10">
-                                        {interest}
-                                    </PillTag>
-                                ))}
+                                {profile.interests.map((interest, i) => {
+                                    const colors: ('purple' | 'pink' | 'yellow' | 'green' | 'default')[] = ['purple', 'pink', 'yellow', 'green', 'default']
+                                    const color = colors[i % colors.length]
+
+                                    return (
+                                        <PillTag key={i} size="md" color={color} className="border-white/10">
+                                            {interest}
+                                        </PillTag>
+                                    )
+                                })}
                             </div>
                         </div>
                     )}
+
 
                     {/* Actions */}
                     <div className="flex justify-center pt-4 pb-8">
