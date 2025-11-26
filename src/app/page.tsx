@@ -9,6 +9,7 @@ import ChatInterface from '@/components/ChatInterface'
 import WalletCard from '@/components/WalletCard'
 import SettingsProfile from '@/components/SettingsProfile'
 import { supabase } from '@/lib/supabase'
+import Header from '@/components/layout/Header'
 
 type Tab = 'feed' | 'matches' | 'wallet' | 'settings'
 
@@ -82,14 +83,7 @@ export default function Home() {
     return (
         <div className="min-h-screen">
             {/* Header */}
-            <header className="glass-panel sticky top-0 z-40">
-                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-gradient">
-                        ChainMeet
-                    </h1>
-                    <appkit-button />
-                </div>
-            </header>
+            <Header />
 
             {/* Main Content */}
             <main className="container mx-auto px-4 py-8">
