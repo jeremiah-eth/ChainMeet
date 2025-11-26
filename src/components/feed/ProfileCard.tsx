@@ -1,10 +1,9 @@
+'use client'
+
 import { Profile } from '@/types/profile'
-import { CSSProperties } from 'react'
+import { CSSProperties, useState, useRef } from 'react'
 import { MapPin } from 'lucide-react'
 import { PillTag, MatchBadge } from '@/components/shared'
-
-
-
 
 interface ProfileCardProps {
     profile: Profile
@@ -21,10 +20,68 @@ export default function ProfileCard({
     style = {},
     onSwipe
 }: ProfileCardProps) {
+    const [dragStart, setDragStart] = useState<{ x: number, y: number } | null>(null)
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const cardRef = useRef<HTMLDivElement>(null)
+
+    const handleStart = (clientX: number, clientY: number) => {
+        if (!active) return
+        setDragStart({ x: clientX, y: clientY })
+    }
+
+    const handleMove = (clientX: number, clientY: number) => {
+        if (!dragStart || !active) return
+        const deltaX = clientX - dragStart.x
+        const deltaY = clientY - dragStart.y
+        setDragOffset({ x: deltaX, y: deltaY })
+    }
+
+    const handleEnd = () => {
+        if (!active) return
+
+        const threshold = 100
+        if (dragOffset.x > threshold) {
+            onSwipe?.('right')
+        } else if (dragOffset.x < -threshold) {
+            onSwipe?.('left')
+        } else if (dragOffset.y < -threshold) {
+            onSwipe?.('up')
+        }
+
+        setDragStart(null)
+        setDragOffset({ x: 0, y: 0 })
+    }
+
+    const getCardStyle = () => {
+        const rotate = dragOffset.x * 0.1
+        return {
+            ...style,
+            transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${rotate}deg)`,
+            transition: dragStart ? 'none' : 'transform 0.3s ease',
+            cursor: active ? (dragStart ? 'grabbing' : 'grab') : 'default'
+        }
+    }
+
+    const getAnimationClass = () => {
+        if (!active) return ''
+        // Add animation classes based on external state if needed
+        // For now, we handle animations via transform in getCardStyle
+        return ''
+    }
+
     return (
         <div
-            className={`relative w-full h-full rounded-3xl overflow-hidden bg-white shadow-xl select-none ${className}`}
-            style={style}
+            ref={cardRef}
+            className={`relative w-full h-full rounded-3xl overflow-hidden bg-white shadow-xl select-none ${className} ${getAnimationClass()}`}
+            style={getCardStyle()}
+
+            onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)}
+            onTouchMove={(e) => handleMove(e.touches[0].clientX, e.touches[0].clientY)}
+            onTouchEnd={handleEnd}
+            onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
+            onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
+            onMouseUp={handleEnd}
+            onMouseLeave={handleEnd}
         >
             {/* Photo Background */}
             <div className="absolute inset-0">
@@ -52,7 +109,6 @@ export default function ProfileCard({
             )}
 
             {/* Info Overlay */}
-
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
                 <div className="flex items-end justify-between mb-2">
                     <div>
@@ -104,8 +160,6 @@ export default function ProfileCard({
                     </div>
                 )}
             </div>
-
         </div>
     )
 }
-
