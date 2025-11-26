@@ -9,6 +9,7 @@ export interface GradientButtonProps extends ButtonHTMLAttributes<HTMLButtonElem
     size?: 'sm' | 'md' | 'lg'
     shape?: 'pill' | 'rounded' | 'circular'
     icon?: LucideIcon
+    isLoading?: boolean
     className?: string
 }
 
@@ -18,7 +19,9 @@ export default function GradientButton({
     size = 'md',
     shape = 'pill',
     icon: Icon,
+    isLoading = false,
     className = '',
+    disabled,
     ...props
 }: GradientButtonProps) {
     const variantClass = `gradient-button-${variant}`
@@ -38,9 +41,19 @@ export default function GradientButton({
     ].filter(Boolean).join(' ')
 
     return (
-        <button className={classes} {...props}>
-            {Icon && <Icon className={children ? "w-5 h-5" : "w-6 h-6"} />}
-            {children}
+        <button
+            className={classes}
+            disabled={disabled || isLoading}
+            {...props}
+        >
+            {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+                <>
+                    {Icon && <Icon className={children ? "w-5 h-5" : "w-6 h-6"} />}
+                    {children}
+                </>
+            )}
         </button>
     )
 }
