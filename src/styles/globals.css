@@ -418,3 +418,63 @@ body {
   width: 28px;
   height: 28px;
 }
+
+/* Match Badge Utilities */
+.match-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-light);
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.match-badge-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  gap: 4px;
+}
+
+.match-badge-lg {
+  padding: 10px 16px;
+  font-size: 16px;
+  gap: 8px;
+}
+
+/* Match Badge Percentage-based Gradients */
+.match-badge-low {
+  background: linear-gradient(135deg, #9E9E9E, #757575);
+}
+
+.match-badge-medium {
+  background: linear-gradient(135deg, var(--color-green), var(--color-green-dark));
+}
+
+.match-badge-high {
+  background: linear-gradient(135deg, var(--color-purple), var(--color-pink));
+}
+
+.match-badge-perfect {
+  background: linear-gradient(135deg, var(--color-yellow), #FFA500);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.match-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.match-badge-sm svg {
+  width: 14px;
+  height: 14px;
+}
+
+.match-badge-lg svg {
+  width: 18px;
+  height: 18px;
+}
