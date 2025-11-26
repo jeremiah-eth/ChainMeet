@@ -322,3 +322,92 @@ body {
   width: 64px;
   height: 64px;
 }
+
+/* Action Button Styles (Like/Pass/Super-Like) */
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+}
+
+.action-button:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-xl);
+}
+
+.action-button:active {
+  transform: scale(0.95);
+}
+
+.action-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Action Button Sizes */
+.action-button-sm {
+  width: 48px;
+  height: 48px;
+}
+
+.action-button-md {
+  width: 56px;
+  height: 56px;
+}
+
+.action-button-lg {
+  width: 64px;
+  height: 64px;
+}
+
+/* Action Button Variants */
+.action-button-pass {
+  background: linear-gradient(135deg, #FF6B6B, #FF5252);
+  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
+}
+
+.action-button-pass:hover {
+  box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4);
+}
+
+.action-button-like {
+  background: var(--gradient-primary);
+  box-shadow: 0 4px 16px rgba(139, 127, 217, 0.3);
+}
+
+.action-button-like:hover {
+  box-shadow: 0 8px 24px rgba(139, 127, 217, 0.4);
+}
+
+.action-button-super {
+  background: linear-gradient(135deg, var(--color-yellow), #FFA500);
+  box-shadow: 0 4px 16px rgba(255, 217, 61, 0.3);
+}
+
+.action-button-super:hover {
+  box-shadow: 0 8px 24px rgba(255, 217, 61, 0.4);
+}
+
+/* Action Button Icons */
+.action-button svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.action-button-sm svg {
+  width: 20px;
+  height: 20px;
+}
+
+.action-button-lg svg {
+  width: 28px;
+  height: 28px;
+}
