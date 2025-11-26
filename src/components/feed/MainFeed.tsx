@@ -8,34 +8,40 @@ import { Profile } from '@/types/profile'
 // Sample profiles for demonstration
 const SAMPLE_PROFILES: Profile[] = [
     {
-        id: '1',
-        name: 'Sarah',
+        wallet_address: '0x123',
+        display_name: 'Sarah',
         age: 28,
         bio: 'Love hiking, coffee, and good conversations. Looking for someone who can keep up with my adventures! 🏔️☕',
-        photos: ['https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'],
+        location: 'New York',
+        latitude: 40.7128,
+        longitude: -74.0060,
+        photos: [{ url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah', sort_order: 0 }],
         interests: ['Hiking', 'Coffee', 'Travel', 'Photography', 'Yoga'],
-        distance: 3,
-        wallet_address: '0x123'
+        distance: 3
     },
     {
-        id: '2',
-        name: 'Emma',
+        wallet_address: '0x456',
+        display_name: 'Emma',
         age: 26,
         bio: 'Artist and dog lover. Always looking for new inspiration and good vibes 🎨🐕',
-        photos: ['https://api.dicebear.com/7.x/avataaars/svg?seed=Emma'],
+        location: 'Brooklyn',
+        latitude: 40.6782,
+        longitude: -73.9442,
+        photos: [{ url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma', sort_order: 0 }],
         interests: ['Art', 'Dogs', 'Music', 'Cooking'],
-        distance: 5,
-        wallet_address: '0x456'
+        distance: 5
     },
     {
-        id: '3',
-        name: 'Olivia',
+        wallet_address: '0x789',
+        display_name: 'Olivia',
         age: 27,
         bio: 'Foodie, traveler, and spontaneous adventurer. Let\'s explore the city together! 🍕✈️',
-        photos: ['https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia'],
+        location: 'Manhattan',
+        latitude: 40.7831,
+        longitude: -73.9712,
+        photos: [{ url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia', sort_order: 0 }],
         interests: ['Food', 'Travel', 'Dancing', 'Wine'],
-        distance: 2,
-        wallet_address: '0x789'
+        distance: 2
     }
 ]
 
@@ -45,7 +51,7 @@ export default function MainFeed() {
     const [showFilters, setShowFilters] = useState(false)
 
     const handleSwipe = (direction: 'left' | 'right' | 'up') => {
-        console.log(`Swiped ${direction} on ${profiles[currentIndex]?.name}`)
+        console.log(`Swiped ${direction} on ${profiles[currentIndex]?.display_name}`)
 
         // Move to next profile
         if (currentIndex < profiles.length - 1) {
@@ -91,7 +97,7 @@ export default function MainFeed() {
                             {/* Background cards (stack effect) */}
                             {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
                                 <div
-                                    key={profile.id}
+                                    key={profile.wallet_address}
                                     className="absolute inset-0 w-full"
                                     style={{
                                         transform: `scale(${1 - (index + 1) * 0.05}) translateY(${(index + 1) * 10}px)`,

@@ -53,7 +53,7 @@ export default function ProfileCard({
         setDragOffset({ x: 0, y: 0 })
     }
 
-    const primaryPhoto = profile.photos?.[0] || '/placeholder-profile.jpg'
+    const primaryPhoto = profile.photos?.[0]?.url || '/placeholder-profile.jpg'
     const age = profile.age || 25
     const distance = profile.distance || 5
 
@@ -119,7 +119,7 @@ export default function ProfileCard({
                 <div className="flex items-end justify-between mb-2">
                     <div>
                         <h2 className="text-3xl font-bold mb-1">
-                            {profile.name}, {age}
+                            {profile.display_name}, {age}
                         </h2>
                         <div className="flex items-center gap-1 text-sm text-white/90">
                             <MapPin className="w-4 h-4" />
