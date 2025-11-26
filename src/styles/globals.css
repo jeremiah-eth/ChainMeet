@@ -1,480 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  /* New Gradient Color Palette - Yellow-Green to Purple-Blue */
-  --bg-gradient-start: #F0F9E8;
-  /* Light yellow-green */
-  --bg-gradient-mid: #E8F5E9;
-  /* Soft green */
-  --bg-gradient-end: #E8E5F9;
-  /* Light purple */
+  /* 
+   * ChainMeet Clean Design System
+   * Reference: Onboarding 1.png
+   */
 
-  /* Primary Colors */
-  --color-purple: #8B7FD9;
-  /* Main purple */
-  --color-purple-light: #A599E9;
-  --color-purple-dark: #6B5FB9;
+  /* Base Colors - Clean White/Gray Theme */
+  --bg-page: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-secondary: #F7F7F7;
+  --bg-input: #F5F5F5;
 
-  --color-pink: #FF6B9D;
-  /* Accent pink */
-  --color-pink-light: #FF8FB5;
-  --color-pink-dark: #E5527D;
+  /* Text Colors - High Contrast */
+  --text-primary: #000000;
+  --text-secondary: #757575;
+  --text-tertiary: #BDBDBD;
+  --text-inverse: #FFFFFF;
 
-  --color-yellow: #FFD93D;
-  /* Accent yellow */
-  --color-yellow-light: #FFE66D;
-  --color-yellow-dark: #F5C518;
+  /* Primary Accent - Deep Royal Purple (Placeholder for exact hex) */
+  --primary: #6200EE;
+  --primary-dark: #3700B3;
+  --primary-light: #BB86FC;
+  --primary-fade: rgba(98, 0, 238, 0.08);
 
-  --color-green: #6BCF7F;
-  /* Accent green */
-  --color-green-light: #8FE19F;
-  --color-green-dark: #4BAF5F;
+  /* Semantic Colors */
+  --error: #B00020;
+  --success: #00C853;
+  --warning: #FFAB00;
 
-  /* Gradient Combinations */
-  --gradient-primary: linear-gradient(135deg, var(--color-purple), var(--color-pink));
-  --gradient-secondary: linear-gradient(135deg, var(--color-yellow), #FFA500);
-  --gradient-accent: linear-gradient(135deg, var(--color-green), var(--color-purple));
-  --gradient-bg: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+  /* Borders & Dividers */
+  --border-light: #E0E0E0;
+  --border-focus: #6200EE;
 
-  /* Text Colors */
-  --text-primary: #2D2D2D;
-  --text-secondary: #6B6B6B;
-  --text-light: #FFFFFF;
-  --text-muted: #9E9E9E;
+  /* Spacing & Layout */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
 
-  /* Glass/Card Backgrounds */
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-bg-light: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(139, 127, 217, 0.15);
-
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(139, 127, 217, 0.08);
-  --shadow-md: 0 4px 16px rgba(139, 127, 217, 0.12);
-  --shadow-lg: 0 8px 32px rgba(139, 127, 217, 0.16);
-  --shadow-xl: 0 12px 48px rgba(139, 127, 217, 0.2);
-
-  /* Legacy support (will be phased out) */
-  --foreground-rgb: 45, 45, 45;
-  --accent-primary: var(--color-purple);
-  --accent-secondary: var(--color-pink);
-  --accent-dark: var(--color-purple-dark);
+  /* Shadows - Subtle & Clean */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* Dark Mode Support (Future proofing, but sticking to light for now as per "Clean" request) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* --bg-page: #121212; */
+    /* --text-primary: #FFFFFF; */
+    /* Keeping light mode forced for now to match Hinge/POF clean white aesthetic */
+  }
+}
 
 body {
+  background-color: var(--bg-page);
   color: var(--text-primary);
-  background: var(--gradient-bg);
-  min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-
-/* Glassmorphism Utilities */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-md);
-}
-
-.glass-panel-light {
-  background: var(--glass-bg-light);
-  box-shadow: var(--shadow-sm);
-}
-
-
-.glass-button {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.glass-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-}
-
-.glass-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.glass-input {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--glass-border);
-  color: var(--text-primary);
-  padding: 12px 16px;
-  border-radius: 12px;
-  width: 100%;
-  transition: all 0.3s ease;
-}
-
-.glass-input:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.glass-input::placeholder {
-  color: var(--text-secondary);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(59, 130, 246, 0.05);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--accent-primary);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-dark);
-}
-
-/* Utility Classes */
-.text-gradient {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.card-hover {
-  transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
-}
-
-/* Pill Tag Utilities */
-.pill-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 500;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  transition: all 0.2s ease;
-  cursor: default;
-}
-
-.pill-tag-sm {
-  padding: 4px 12px;
-  font-size: 12px;
-  gap: 4px;
-}
-
-.pill-tag-md {
-  padding: 8px 16px;
-  font-size: 14px;
-  gap: 6px;
-}
-
-.pill-tag-lg {
-  padding: 12px 20px;
-  font-size: 16px;
-  gap: 8px;
-}
-
-/* Pill Tag Color Variants */
-.pill-tag-purple {
-  background: linear-gradient(135deg, rgba(139, 127, 217, 0.15), rgba(165, 153, 233, 0.15));
-  border-color: var(--color-purple-light);
-  color: var(--color-purple-dark);
-}
-
-.pill-tag-pink {
-  background: linear-gradient(135deg, rgba(255, 107, 157, 0.15), rgba(255, 143, 181, 0.15));
-  border-color: var(--color-pink-light);
-  color: var(--color-pink-dark);
-}
-
-.pill-tag-yellow {
-  background: linear-gradient(135deg, rgba(255, 217, 61, 0.15), rgba(255, 230, 109, 0.15));
-  border-color: var(--color-yellow-light);
-  color: var(--color-yellow-dark);
-}
-
-.pill-tag-green {
-  background: linear-gradient(135deg, rgba(107, 207, 127, 0.15), rgba(143, 225, 159, 0.15));
-  border-color: var(--color-green-light);
-  color: var(--color-green-dark);
-}
-
-/* Interactive Pill Tags */
-.pill-tag-clickable {
-  cursor: pointer;
-}
-
-.pill-tag-clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.pill-tag-selected {
-  background: var(--gradient-primary);
-  color: var(--text-light);
-  border-color: transparent;
-}
-
-/* Gradient Button Utilities */
-.gradient-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: 24px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-light);
-  background: var(--gradient-primary);
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-md);
-}
-
-.gradient-button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.gradient-button:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
-}
-
-.gradient-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Gradient Button Sizes */
-.gradient-button-sm {
-  padding: 8px 16px;
-  font-size: 14px;
-  border-radius: 20px;
-}
-
-.gradient-button-md {
-  padding: 12px 24px;
-  font-size: 16px;
-  border-radius: 24px;
-}
-
-.gradient-button-lg {
-  padding: 16px 32px;
-  font-size: 18px;
-  border-radius: 28px;
-}
-
-/* Gradient Button Color Variants */
-.gradient-button-primary {
-  background: var(--gradient-primary);
-}
-
-.gradient-button-secondary {
-  background: var(--gradient-secondary);
-}
-
-.gradient-button-accent {
-  background: var(--gradient-accent);
-}
-
-/* Gradient Button Shapes */
-.gradient-button-pill {
-  border-radius: 999px;
-}
-
-.gradient-button-rounded {
-  border-radius: 16px;
-}
-
-.gradient-button-circular {
-  border-radius: 50%;
-  padding: 16px;
-  width: 56px;
-  height: 56px;
-}
-
-.gradient-button-circular-sm {
-  padding: 12px;
-  width: 48px;
-  height: 48px;
-}
-
-.gradient-button-circular-lg {
-  padding: 20px;
-  width: 64px;
-  height: 64px;
-}
-
-/* Action Button Styles (Like/Pass/Super-Like) */
-.action-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-lg);
-  padding: 0;
-}
-
-.action-button:hover {
-  transform: scale(1.1);
-  box-shadow: var(--shadow-xl);
-}
-
-.action-button:active {
-  transform: scale(0.95);
-}
-
-.action-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Action Button Sizes */
-.action-button-sm {
-  width: 48px;
-  height: 48px;
-}
-
-.action-button-md {
-  width: 56px;
-  height: 56px;
-}
-
-.action-button-lg {
-  width: 64px;
-  height: 64px;
-}
-
-/* Action Button Variants */
-.action-button-pass {
-  background: linear-gradient(135deg, #FF6B6B, #FF5252);
-  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
-}
-
-.action-button-pass:hover {
-  box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4);
-}
-
-.action-button-like {
-  background: var(--gradient-primary);
-  box-shadow: 0 4px 16px rgba(139, 127, 217, 0.3);
-}
-
-.action-button-like:hover {
-  box-shadow: 0 8px 24px rgba(139, 127, 217, 0.4);
-}
-
-.action-button-super {
-  background: linear-gradient(135deg, var(--color-yellow), #FFA500);
-  box-shadow: 0 4px 16px rgba(255, 217, 61, 0.3);
-}
-
-.action-button-super:hover {
-  box-shadow: 0 8px 24px rgba(255, 217, 61, 0.4);
-}
-
-/* Action Button Icons */
-.action-button svg {
-  width: 24px;
-  height: 24px;
-  color: white;
-}
-
-.action-button-sm svg {
-  width: 20px;
-  height: 20px;
-}
-
-.action-button-lg svg {
-  width: 28px;
-  height: 28px;
-}
-
-/* Match Badge Utilities */
-.match-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 14px;
+/* Typography Utilities */
+.h1 {
+  font-size: 32px;
   font-weight: 700;
-  color: var(--text-light);
-  background: var(--gradient-primary);
-  box-shadow: var(--shadow-md);
-  transition: all 0.3s ease;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
 }
 
-.match-badge-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-  gap: 4px;
+.h2 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
 }
 
-.match-badge-lg {
-  padding: 10px 16px;
-  font-size: 16px;
-  gap: 8px;
+.h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  line-height: 1.4;
 }
 
-/* Match Badge Percentage-based Gradients */
-.match-badge-low {
-  background: linear-gradient(135deg, #9E9E9E, #757575);
+.body-lg {
+  font-size: 17px;
+  line-height: 1.5;
 }
 
-.match-badge-medium {
-  background: linear-gradient(135deg, var(--color-green), var(--color-green-dark));
+.body-md {
+  font-size: 15px;
+  line-height: 1.5;
 }
 
-.match-badge-high {
-  background: linear-gradient(135deg, var(--color-purple), var(--color-pink));
+.caption {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
 }
 
-.match-badge-perfect {
-  background: linear-gradient(135deg, var(--color-yellow), #FFA500);
-  animation: pulseGlow 2s ease-in-out infinite;
+/* Layout Utilities */
+.container-safe {
+  max-width: 480px;
+  /* Mobile-first constraint */
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
 }
 
-.match-badge svg {
-  width: 16px;
-  height: 16px;
+.full-height {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.match-badge-sm svg {
-  width: 14px;
-  height: 14px;
+/* Animation Utilities - Subtle */
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-.match-badge-lg svg {
-  width: 18px;
-  height: 18px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
