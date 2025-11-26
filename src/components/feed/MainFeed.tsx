@@ -2,9 +2,66 @@
 
 import { useState } from 'react'
 import { Heart, X, Star, SlidersHorizontal } from 'lucide-react'
+import ProfileCard from './ProfileCard'
+import { Profile } from '@/types/profile'
+
+// Sample profiles for demonstration
+const SAMPLE_PROFILES: Profile[] = [
+    {
+        id: '1',
+        name: 'Sarah',
+        age: 28,
+        bio: 'Love hiking, coffee, and good conversations. Looking for someone who can keep up with my adventures! 🏔️☕',
+        photos: ['https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'],
+        interests: ['Hiking', 'Coffee', 'Travel', 'Photography', 'Yoga'],
+        distance: 3,
+        wallet_address: '0x123'
+    },
+    {
+        id: '2',
+        name: 'Emma',
+        age: 26,
+        bio: 'Artist and dog lover. Always looking for new inspiration and good vibes 🎨🐕',
+        photos: ['https://api.dicebear.com/7.x/avataaars/svg?seed=Emma'],
+        interests: ['Art', 'Dogs', 'Music', 'Cooking'],
+        distance: 5,
+        wallet_address: '0x456'
+    },
+    {
+        id: '3',
+        name: 'Olivia',
+        age: 27,
+        bio: 'Foodie, traveler, and spontaneous adventurer. Let\'s explore the city together! 🍕✈️',
+        photos: ['https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia'],
+        interests: ['Food', 'Travel', 'Dancing', 'Wine'],
+        distance: 2,
+        wallet_address: '0x789'
+    }
+]
 
 export default function MainFeed() {
+    const [profiles, setProfiles] = useState<Profile[]>(SAMPLE_PROFILES)
+    const [currentIndex, setCurrentIndex] = useState(0)
     const [showFilters, setShowFilters] = useState(false)
+
+    const handleSwipe = (direction: 'left' | 'right' | 'up') => {
+        console.log(`Swiped ${direction} on ${profiles[currentIndex]?.name}`)
+
+        // Move to next profile
+        if (currentIndex < profiles.length - 1) {
+            setCurrentIndex(prev => prev + 1)
+        } else {
+            // No more profiles
+            console.log('No more profiles')
+        }
+    }
+
+    const handleAction = (action: 'pass' | 'super' | 'like') => {
+        const direction = action === 'pass' ? 'left' : 'right'
+        handleSwipe(direction)
+    }
+
+    const currentProfile = profiles[currentIndex]
 
     return (
         <div className="min-h-screen bg-white">
@@ -29,10 +86,38 @@ export default function MainFeed() {
             {/* Main Content Area - Card Stack */}
             <main className="pt-20 pb-32 px-4">
                 <div className="max-w-md mx-auto">
-                    {/* Profile cards will be rendered here */}
-                    <div className="relative w-full aspect-[3/4] bg-gray-100 rounded-3xl flex items-center justify-center">
-                        <p className="text-gray-400">Loading profiles...</p>
-                    </div>
+                    {currentProfile ? (
+                        <div className="relative">
+                            {/* Background cards (stack effect) */}
+                            {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
+                                <div
+                                    key={profile.id}
+                                    className="absolute inset-0 w-full"
+                                    style={{
+                                        transform: `scale(${1 - (index + 1) * 0.05}) translateY(${(index + 1) * 10}px)`,
+                                        zIndex: -index - 1,
+                                        opacity: 1 - (index + 1) * 0.3
+                                    }}
+                                >
+                                    <div className="w-full aspect-[3/4] bg-gray-200 rounded-3xl" />
+                                </div>
+                            ))}
+
+                            {/* Active card */}
+                            <ProfileCard
+                                profile={currentProfile}
+                                active={true}
+                                onSwipe={handleSwipe}
+                            />
+                        </div>
+                    ) : (
+                        <div className="relative w-full aspect-[3/4] bg-gray-100 rounded-3xl flex items-center justify-center">
+                            <div className="text-center">
+                                <p className="text-gray-400 text-lg mb-2">No more profiles</p>
+                                <p className="text-gray-300 text-sm">Check back later!</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </main>
 
@@ -41,17 +126,29 @@ export default function MainFeed() {
                 <div className="max-w-md mx-auto px-4">
                     <div className="flex items-center justify-center gap-6">
                         {/* Pass Button */}
-                        <button className="w-16 h-16 bg-white border-2 border-red-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform active:scale-95">
+                        <button
+                            onClick={() => handleAction('pass')}
+                            disabled={!currentProfile}
+                            className="w-16 h-16 bg-white border-2 border-red-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             <X className="w-7 h-7 text-red-500" />
                         </button>
 
                         {/* Super Like Button */}
-                        <button className="w-14 h-14 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform active:scale-95">
+                        <button
+                            onClick={() => handleAction('super')}
+                            disabled={!currentProfile}
+                            className="w-14 h-14 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             <Star className="w-6 h-6 text-blue-500" />
                         </button>
 
                         {/* Like Button */}
-                        <button className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform active:scale-95">
+                        <button
+                            onClick={() => handleAction('like')}
+                            disabled={!currentProfile}
+                            className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             <Heart className="w-7 h-7 text-white fill-current" />
                         </button>
                     </div>
@@ -60,3 +157,4 @@ export default function MainFeed() {
         </div>
     )
 }
+
