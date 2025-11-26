@@ -1,119 +1,56 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
-import { useRouter } from 'next/navigation'
-import { Heart, MessageCircle, Wallet, Settings, Sparkles } from 'lucide-react'
-import SocialFeed from '@/components/SocialFeed'
-import ChatInterface from '@/components/ChatInterface'
-import WalletCard from '@/components/WalletCard'
-import SettingsProfile from '@/components/SettingsProfile'
-import { supabase } from '@/lib/supabase'
-import Header from '@/components/layout/Header'
-import BottomNav from '@/components/layout/BottomNav'
-import Sidebar from '@/components/layout/Sidebar'
-
-type Tab = 'feed' | 'matches' | 'wallet' | 'settings'
+import { useState } from 'react'
+import OnboardingCarousel from '@/components/onboarding/OnboardingCarousel'
+import { Button } from '@/components/ui/Button'
 
 export default function Home() {
-    const { address, isConnected } = useAccount()
-    const router = useRouter()
-    const [activeTab, setActiveTab] = useState<Tab>('feed')
-    const [hasProfile, setHasProfile] = useState(false)
-    const [loading, setLoading] = useState(true)
+    const [showAuth, setShowAuth] = useState(false)
 
-    useEffect(() => {
-        checkProfile()
-    }, [address, isConnected])
-
-    const checkProfile = async () => {
-        if (!isConnected || !address) {
-            setLoading(false)
-            return
-        }
-
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('wallet_address')
-                .eq('wallet_address', address)
-                .single()
-
-            if (data) {
-                setHasProfile(true)
-            } else {
-                router.push('/onboarding')
-            }
-        } catch (error) {
-            console.error('Error checking profile:', error)
-            router.push('/onboarding')
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    if (!isConnected) {
-        return (
-            <div className="min-h-screen flex items-center justify-center p-4">
-                <div className="glass-panel p-12 text-center space-y-6 max-w-md">
-                    <div className="flex justify-center">
-                        <Sparkles className="w-16 h-16 text-blue-500" />
-                    </div>
-                    <h1 className="text-4xl font-bold text-gradient">
-                        ChainMeet
-                    </h1>
-                    <p className="text-gray-700">
-                        The wallet-based dating app where crypto meets connection
-                    </p>
-                    <appkit-button />
-                    <p className="text-xs text-gray-600">
-                        Connect your wallet to get started
-                    </p>
-                </div>
-            </div>
-        )
-    }
-
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-gray-600">Loading...</div>
-            </div>
-        )
-    }
+    const slides = [
+        {
+            id: 1,
+            image: '/onboarding-1.png', // Placeholder
+            title: 'Algorithm',
+            description: 'Users going through a vetting process to ensure you never match with bots.',
+        },
+        {
+            id: 2,
+            image: '/onboarding-2.png', // Placeholder
+            title: 'Matches',
+            description: 'We match you with people that have a large array of similar interests.',
+        },
+        {
+            id: 3,
+            image: '/onboarding-3.png', // Placeholder
+            title: 'Premium',
+            description: 'Sign up today and enjoy the first month of premium benefits on us.',
+        },
+    ]
 
     return (
-        <div className="min-h-screen">
-            {/* Header */}
-            <Header />
+        <main className="flex min-h-screen flex-col items-center justify-between bg-white p-6">
+            <div className="w-full flex-1 flex flex-col items-center justify-center">
+                <OnboardingCarousel slides={slides} />
+            </div>
 
-            {/* Main Content */}
-            <main className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    {/* Main Content Area */}
-                    <div className="lg:col-span-3">
-                        {activeTab === 'feed' && <SocialFeed />}
-                        {activeTab === 'matches' && <ChatInterface />}
-                        {activeTab === 'wallet' && (
-                            <div className="max-w-md mx-auto">
-                                <WalletCard />
-                            </div>
-                        )}
-                        {activeTab === 'settings' && <SettingsProfile />}
-                    </div>
-
-                    {/* Sidebar - Desktop Only */}
-                    <div className="hidden lg:block space-y-4">
-                        <WalletCard />
-                    </div>
+            <div className="w-full max-w-xs space-y-4 mb-8">
+                <Button
+                    variant="default"
+                    size="lg"
+                    fullWidth
+                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-full"
+                    onClick={() => setShowAuth(true)}
+                >
+                    Create an account
+                </Button>
+                <div className="text-center">
+                    <span className="text-gray-500 text-sm">Already have an account? </span>
+                    <button className="text-purple-600 font-bold text-sm hover:underline">
+                        Sign In
+                    </button>
                 </div>
-            </main>
-
-            {/* Bottom Navigation - Mobile */}
-            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-
-            {/* Desktop Tab Navigation */}
-            <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
+            </div>
+        </main>
     )
 }
