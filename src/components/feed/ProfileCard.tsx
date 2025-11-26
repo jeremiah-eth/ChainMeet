@@ -1,6 +1,8 @@
 import { Profile } from '@/types/profile'
 import { CSSProperties } from 'react'
 import { MapPin } from 'lucide-react'
+import { PillTag } from '@/components/shared'
+
 
 
 interface ProfileCardProps {
@@ -65,7 +67,31 @@ export default function ProfileCard({
                         {profile.bio}
                     </p>
                 )}
+
+                {/* Interest Tags */}
+                {profile.interests && profile.interests.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                        {profile.interests.slice(0, 3).map((interest, i) => (
+                            <PillTag
+                                key={i}
+                                size="sm"
+                                className="bg-white/20 backdrop-blur-md border-white/30 text-white"
+                            >
+                                {interest}
+                            </PillTag>
+                        ))}
+                        {profile.interests.length > 3 && (
+                            <PillTag
+                                size="sm"
+                                className="bg-white/20 backdrop-blur-md border-white/30 text-white"
+                            >
+                                +{profile.interests.length - 3}
+                            </PillTag>
+                        )}
+                    </div>
+                )}
             </div>
+
         </div>
     )
 }
