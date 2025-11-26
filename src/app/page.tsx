@@ -5,6 +5,7 @@ import OnboardingCarousel from '@/components/onboarding/OnboardingCarousel'
 import AuthOptions from '@/components/onboarding/AuthOptions'
 import GenderSelection from '@/components/onboarding/GenderSelection'
 import PassionsSelector from '@/components/onboarding/PassionsSelector'
+import PhotoUpload from '@/components/onboarding/PhotoUpload'
 
 type OnboardingStep = 'carousel' | 'auth-options' | 'gender-selection' | 'passions' | 'photos'
 
@@ -49,6 +50,12 @@ export default function Home() {
         setCurrentStep('photos')
     }
 
+    const handlePhotosUpload = (photos: File[]) => {
+        setRegistrationData(prev => ({ ...prev, photos }))
+        // TODO: Navigate to main app or complete registration
+        console.log('Registration complete:', { ...registrationData, photos })
+    }
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-between bg-white p-6">
             {currentStep === 'carousel' && (
@@ -77,7 +84,12 @@ export default function Home() {
                 />
             )}
 
-            {/* Future steps: photos, then main app */}
+            {currentStep === 'photos' && (
+                <PhotoUpload
+                    onContinue={handlePhotosUpload}
+                    onBack={() => setCurrentStep('passions')}
+                />
+            )}
         </main>
     )
 }
