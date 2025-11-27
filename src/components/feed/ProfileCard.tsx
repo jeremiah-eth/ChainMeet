@@ -83,7 +83,7 @@ export default function ProfileCard({
             <div className="absolute inset-0">
                 <img
                     src={primaryPhoto}
-                    alt={profile.name}
+                    alt={profile.display_name}
                     className="w-full h-full object-cover"
                 />
                 {/* Gradient Overlay */}
