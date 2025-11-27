@@ -115,9 +115,26 @@ export default function Home() {
         }
 
         try {
-            // Upload photos to Supabase Storage
-            const photoUrls: { url: string; sort_order: number }[] = []
+            // First, create the profile
+            const { error: insertError } = await supabase
+                .from('profiles')
+                .insert({
+                    wallet_address: address.toLowerCase(),
+                    display_name: 'User', // TODO: Add name input
+                    age: 25, // TODO: Add age input
+                    bio: '', // TODO: Add bio input
+                    location: 'Unknown', // TODO: Add location
+                    gender: registrationData.gender,
+                    interests: registrationData.interests,
+                })
 
+            if (insertError) {
+                console.error('Insert error:', insertError)
+                alert(`Failed to create profile: ${insertError.message}`)
+                return
+            }
+
+            // Then upload photos to storage and create photo records
             for (let i = 0; i < photos.length; i++) {
                 const file = photos[i]
                 const fileName = `${address}/${Date.now()}_${i}.jpg`
@@ -135,26 +152,14 @@ export default function Home() {
                     .from('profile-photos')
                     .getPublicUrl(fileName)
 
-                photoUrls.push({ url: publicUrl, sort_order: i })
-            }
-
-            // Create profile in database
-            const { error: insertError } = await supabase
-                .from('profiles')
-                .insert({
-                    wallet_address: address.toLowerCase(),
-                    display_name: 'User', // TODO: Add name input
-                    age: 25, // TODO: Add age input
-                    bio: '', // TODO: Add bio input
-                    location: 'Unknown', // TODO: Add location
-                    interests: registrationData.interests,
-                    photos: photoUrls,
-                })
-
-            if (insertError) {
-                console.error('Insert error:', insertError)
-                alert('Failed to create profile. Please try again.')
-                return
+                // Insert photo record
+                await supabase
+                    .from('photos')
+                    .insert({
+                        user_id: address.toLowerCase(),
+                        url: publicUrl,
+                        sort_order: i,
+                    })
             }
 
             // Navigate to feed
