@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useAppKit } from '@reown/appkit/react'
 import OnboardingCarousel from '@/components/onboarding/OnboardingCarousel'
 import AuthOptions from '@/components/onboarding/AuthOptions'
 import GenderSelection from '@/components/onboarding/GenderSelection'
@@ -11,6 +12,7 @@ type OnboardingStep = 'carousel' | 'auth-options' | 'gender-selection' | 'passio
 
 export default function Home() {
     const [currentStep, setCurrentStep] = useState<OnboardingStep>('carousel')
+    const { open } = useAppKit()
 
     // Temporary state to hold registration data
     const [registrationData, setRegistrationData] = useState({
@@ -40,6 +42,10 @@ export default function Home() {
         },
     ]
 
+    const handleWalletConnect = () => {
+        open()
+    }
+
     const handleGenderSelect = (gender: string) => {
         setRegistrationData(prev => ({ ...prev, gender }))
         setCurrentStep('passions')
@@ -64,8 +70,8 @@ export default function Home() {
                         <OnboardingCarousel slides={slides} />
                     </div>
                     <AuthOptions
-                        onCreateAccount={() => setCurrentStep('gender-selection')}
-                        onSignIn={() => console.log('Sign in clicked')}
+                        onCreateAccount={handleWalletConnect}
+                        onSignIn={handleWalletConnect}
                     />
                 </>
             )}
