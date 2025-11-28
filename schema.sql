@@ -34,6 +34,7 @@ create table public.matches (
   user_id_1 text references public.profiles(wallet_address) on delete cascade not null,
   user_id_2 text references public.profiles(wallet_address) on delete cascade not null,
   status text check (status in ('pending', 'accepted', 'rejected')) default 'pending',
+  is_super_like boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   unique(user_id_1, user_id_2)
 );
