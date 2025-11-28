@@ -2,6 +2,7 @@
 
 import BottomNav from '@/components/layout/BottomNav'
 import UserProfile from '@/components/profile/UserProfile'
+import EditProfile from '@/components/profile/EditProfile'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -13,6 +14,7 @@ export default function ProfilePage() {
     const router = useRouter()
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
+    const [isEditing, setIsEditing] = useState(false)
 
     useEffect(() => {
         if (!isConnected) {
@@ -50,6 +52,31 @@ export default function ProfilePage() {
         fetchProfile()
     }, [isConnected, address, router])
 
+    const handleSaveProfile = async (updatedData: Partial<Profile>) => {
+        if (!address || !profile) return
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    display_name: updatedData.display_name,
+                    age: updatedData.age,
+                    bio: updatedData.bio,
+                    location: updatedData.location,
+                    interests: updatedData.interests
+                })
+                .eq('wallet_address', address.toLowerCase())
+
+            if (error) throw error
+
+            setProfile(prev => prev ? { ...prev, ...updatedData } : null)
+            setIsEditing(false)
+        } catch (error) {
+            console.error('Error updating profile:', error)
+            alert('Failed to update profile. Please try again.')
+        }
+    }
+
     if (!isConnected || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
@@ -64,11 +91,19 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen pb-20 bg-white">
-            <UserProfile
-                profile={profile}
-                onEdit={() => console.log('Edit profile')}
-                onSettings={() => console.log('Settings')}
-            />
+            {isEditing ? (
+                <EditProfile
+                    profile={profile}
+                    onSave={handleSaveProfile}
+                    onClose={() => setIsEditing(false)}
+                />
+            ) : (
+                <UserProfile
+                    profile={profile}
+                    onEdit={() => setIsEditing(true)}
+                    onSettings={() => console.log('Settings')}
+                />
+            )}
             <BottomNav />
         </div>
     )

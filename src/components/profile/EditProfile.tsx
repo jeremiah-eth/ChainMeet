@@ -17,13 +17,35 @@ export default function EditProfile({ profile, onSave, onClose }: EditProfilePro
     const [age, setAge] = useState(profile.age)
     const [bio, setBio] = useState(profile.bio)
     const [location, setLocation] = useState(profile.location)
+    const [interests, setInterests] = useState<string[]>(profile.interests || [])
+
+    const PASSIONS_LIST = [
+        'Harry Potter', '90s Kid', 'SoundCloud', 'Spa', 'Self Care',
+        'Heavy Metal', 'House Parties', 'Gin Tonic', 'Gymnastics', 'Ludo',
+        'Maggi', 'Hot Yoga', 'Biryani', 'Meditation', 'Sushi',
+        'Spotify', 'Hockey', 'Basketball', 'Slam Poetry', 'Home Workout',
+        'Theater', 'Cafe Hopping', 'Aquarium', 'Sneakers', 'Instagram',
+        'Hot Springs', 'Walking', 'Running', 'Travel', 'Language Exchange',
+        'Movies', 'Guitarists', 'Social Development', 'Gym', 'Social Media'
+    ]
+
+    const toggleInterest = (interest: string) => {
+        if (interests.includes(interest)) {
+            setInterests(prev => prev.filter(i => i !== interest))
+        } else {
+            if (interests.length < 5) {
+                setInterests(prev => [...prev, interest])
+            }
+        }
+    }
 
     const handleSave = () => {
         onSave({
             display_name: displayName,
             age,
             bio,
-            location
+            location,
+            interests
         })
         onClose()
     }
@@ -85,7 +107,7 @@ export default function EditProfile({ profile, onSave, onClose }: EditProfilePro
                 </div>
 
                 {/* Form Fields */}
-                <div className="space-y-4">
+                <div className="space-y-4 mb-8">
                     <div>
                         <label className="block text-sm font-semibold text-gray-900 mb-2">
                             Name
@@ -131,6 +153,30 @@ export default function EditProfile({ profile, onSave, onClose }: EditProfilePro
                             rows={4}
                             className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none"
                         />
+                    </div>
+                </div>
+
+                {/* Interests Section */}
+                <div className="mb-8">
+                    <label className="block text-sm font-semibold text-gray-900 mb-3">
+                        Interests ({interests.length}/5)
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                        {PASSIONS_LIST.map((passion) => {
+                            const isSelected = interests.includes(passion)
+                            return (
+                                <button
+                                    key={passion}
+                                    onClick={() => toggleInterest(passion)}
+                                    className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all duration-200 ${isSelected
+                                            ? "border-purple-600 text-purple-600 bg-purple-50"
+                                            : "border-gray-300 text-gray-600 hover:border-gray-400"
+                                        }`}
+                                >
+                                    {passion}
+                                </button>
+                            )
+                        })}
                     </div>
                 </div>
             </main>
