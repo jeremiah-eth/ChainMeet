@@ -1,4 +1,4 @@
-import React from 'antml:parameter>
+import React from 'react'
 import { Crown, Check } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
