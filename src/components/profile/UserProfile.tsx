@@ -3,6 +3,7 @@
 import { User, Settings as SettingsIcon, Edit, LogOut } from 'lucide-react'
 import { Profile } from '@/types/profile'
 import { Button } from '@/components/ui/Button'
+import HexagonFrame from '@/components/shared/HexagonFrame'
 
 interface UserProfileProps {
     profile: Profile
@@ -11,7 +12,8 @@ interface UserProfileProps {
 }
 
 export default function UserProfile({ profile, onEdit, onSettings }: UserProfileProps) {
-    const primaryPhoto = profile.photos?.[0]?.url || '/placeholder-profile.jpg'
+    const primaryPhoto = profile.nft_pfp_url || profile.photos?.[0]?.url || '/placeholder-profile.jpg'
+    const isNFT = profile.is_nft_verified && profile.nft_pfp_url
 
     return (
         <div className="min-h-screen bg-white">
@@ -33,11 +35,19 @@ export default function UserProfile({ profile, onEdit, onSettings }: UserProfile
                 <div className="max-w-md mx-auto">
                     {/* Profile Photo */}
                     <div className="relative w-32 h-32 mx-auto mb-4">
-                        <img
-                            src={primaryPhoto}
-                            alt={profile.display_name}
-                            className="w-full h-full rounded-full object-cover border-4 border-gray-100"
-                        />
+                        {isNFT ? (
+                            <HexagonFrame
+                                imageUrl={primaryPhoto}
+                                alt={profile.display_name}
+                                size="lg"
+                            />
+                        ) : (
+                            <img
+                                src={primaryPhoto}
+                                alt={profile.display_name}
+                                className="w-full h-full rounded-full object-cover border-4 border-gray-100"
+                            />
+                        )}
                         <button
                             onClick={onEdit}
                             className="absolute bottom-0 right-0 w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-colors"
