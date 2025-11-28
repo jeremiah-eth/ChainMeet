@@ -10,6 +10,11 @@ create table public.profiles (
   gender text,
   interests text[], -- Array of strings
   is_verified boolean default false,
+  nft_pfp_contract text, -- NFT contract address for profile picture
+  nft_pfp_token_id text, -- NFT token ID for profile picture
+  nft_pfp_url text, -- NFT image URL
+  nft_pfp_collection text, -- NFT collection name
+  is_nft_verified boolean default false, -- Whether NFT ownership is verified
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

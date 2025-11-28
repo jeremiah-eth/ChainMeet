@@ -8,8 +8,14 @@ export interface Profile {
     longitude: number | null
     interests: string[]
     photos: { url: string; sort_order: number }[]
+    nft_pfp_contract?: string
+    nft_pfp_token_id?: string
+    nft_pfp_url?: string
+    nft_pfp_collection?: string
+    is_nft_verified?: boolean
     distance?: number
     matchScore?: number
     commonTokens?: string[]
     commonNFTs?: string[]
 }
+
