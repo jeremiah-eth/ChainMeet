@@ -2,6 +2,9 @@
 
 import { X, MapPin, Briefcase, GraduationCap, Home } from 'lucide-react'
 import { Profile } from '@/types/profile'
+import { useState, useEffect } from 'react'
+import { resolveENS, ENSData } from '@/lib/ens'
+import SocialBadge from '@/components/shared/SocialBadge'
 
 interface ProfileDetailsProps {
     profile: Profile
@@ -9,6 +12,18 @@ interface ProfileDetailsProps {
 }
 
 export default function ProfileDetails({ profile, onClose }: ProfileDetailsProps) {
+    const [ensData, setEnsData] = useState<ENSData | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const loadENS = async () => {
+            const data = await resolveENS(profile.wallet_address)
+            setEnsData(data)
+            setLoading(false)
+        }
+        loadENS()
+    }, [profile.wallet_address])
+
     return (
         <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-slide-up">
             {/* Header */}
@@ -47,6 +62,17 @@ export default function ProfileDetails({ profile, onClose }: ProfileDetailsProps
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">
                         {profile.display_name}, {profile.age}
                     </h2>
+
+                    {/* Social Badges */}
+                    {!loading && ensData?.name && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                            <SocialBadge platform="ens" handle={ensData.name} />
+                            {ensData.twitter && (
+                                <SocialBadge platform="farcaster" handle={`@${ensData.twitter}`} />
+                            )}
+                        </div>
+                    )}
+
                     <div className="flex items-center gap-1 text-gray-600">
                         <MapPin className="w-4 h-4" />
                         <span>{profile.location}</span>
